@@ -1,10 +1,12 @@
-# Noszvaj programvalaszto
+# Noszvaj családi programválasztó - mobilbarát verzió
 
-Interaktiv programvalaszto oldal a 2026. julius 12-15. kozotti noszvaji csaladi nyaralashoz.
+Ez a GitHub Pages csomag a frissített, mobilbarát `index.html` fájlt tartalmazza.
 
-## Hasznalat GitHub Pages-szel
+Újdonságok:
+- rövidebb kártya-előlap mobilra,
+- középre koppintás vagy `Több infó` gomb: fordított kártya részletekkel,
+- magasabb húzási küszöb, hogy ne döntsön véletlenül,
+- alsó döntésgombok mobilon kényelmesebbek,
+- a korábbi családi szavazatok ugyanazon a böngészőn megmaradnak.
 
-1. Hozz letre egy uj GitHub repositoryt.
-2. Toltsd fel az `index.html` fajlt a repository gyokerebe.
-3. Settings > Pages alatt allitsd be: Source = Deploy from a branch, Branch = main, Folder = /root.
-4. A GitHub par perc utan ad egy publikus linket.
+Feltöltés: a meglévő GitHub repositoryban cseréld le az `index.html` fájlt erre az új verzióra, majd commit.

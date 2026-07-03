@@ -3,524 +3,591 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Noszvaj programválasztó – Tinder-szerű kártyák</title>
+  <title>Noszvaj családi programválasztó – 2026. július 12–15.</title>
+  <meta name="description" content="Tinder-szerű, családi programválasztó Noszvaj és Eger környékére, közös szavazás export/import móddal.">
   <style>
     :root{
-      --bg:#f6f1e8;
-      --ink:#202124;
-      --muted:#687076;
-      --card:#fffaf2;
-      --soft:#efe1cf;
-      --accent:#1f6f5b;
-      --accent2:#ba5a31;
-      --danger:#b63838;
-      --yes:#25735b;
-      --maybe:#9a6a1a;
-      --no:#973c3c;
-      --shadow:0 22px 65px rgba(68,45,21,.22);
-      --radius:28px;
+      --bg:#0c1222; --panel:#121a2e; --panel2:#18223a; --text:#f5f7fb; --muted:#aeb8cc; --line:rgba(255,255,255,.12);
+      --chip:rgba(255,255,255,.09); --shadow:0 22px 70px rgba(0,0,0,.35); --radius:24px;
+      --yes:#36d399; --no:#fb7185; --maybe:#fbbf24; --top:#a78bfa; --blue:#7dd3fc;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      background: radial-gradient(circle at 20% 10%, #fff7d7 0, transparent 28%), radial-gradient(circle at 92% 8%, #dff0e4 0, transparent 24%), linear-gradient(135deg,#f7efe4 0%,#f5efe9 45%,#edf3ec 100%);
-      color:var(--ink);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height:1.45;
-    }
+    html,body{margin:0;background:radial-gradient(circle at top left,#20345e 0,#0c1222 42%,#070b14 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100%;}
+    body{padding:20px 16px 42px;}
     a{color:inherit}
-    .app{
-      width:min(1180px,100%);
-      margin:0 auto;
-      padding:20px clamp(14px,2.4vw,28px) 34px;
+    .app{max-width:1240px;margin:0 auto;}
+    header{display:grid;gap:16px;margin-bottom:18px;}
+    .hero{border:1px solid var(--line);background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.04));box-shadow:var(--shadow);border-radius:30px;padding:22px;overflow:hidden;position:relative;}
+    .hero:before{content:"";position:absolute;inset:-80px -30px auto auto;width:260px;height:260px;background:radial-gradient(circle,rgba(125,211,252,.3),transparent 62%);pointer-events:none;}
+    h1{font-size:clamp(28px,5vw,48px);line-height:1.02;margin:0 0 10px;letter-spacing:-.04em;}
+    .lead{margin:0;max-width:860px;color:var(--muted);font-size:15px;line-height:1.55;}
+    .hero-actions,.toolbar,.vote-tools,.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+    button,.button,select,input,label.filelabel{border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--text);border-radius:999px;padding:11px 14px;font-weight:800;cursor:pointer;box-shadow:none;transition:.15s ease;min-height:42px;}
+    input,select{font-weight:650;outline:none;cursor:auto;}
+    button:hover,.button:hover,label.filelabel:hover,select:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
+    button.primary{background:linear-gradient(135deg,rgba(54,211,153,.95),rgba(125,211,252,.88));color:#06111d;border:0;}
+    button.danger{background:rgba(251,113,133,.14);border-color:rgba(251,113,133,.4)}
+    button.ghost{background:transparent}
+    button.small{padding:7px 10px;min-height:34px;font-size:12px;}
+    .button{text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .pill,.tag,.decision-chip,.vote-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--chip);padding:7px 10px;border-radius:999px;color:var(--muted);font-size:12px;font-weight:750;}
+    .pill strong{color:var(--text)}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:18px;align-items:start;}
+    .panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.045));border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+    .filters{margin-bottom:12px;}
+    .filters select,.filters input{flex:1;min-width:170px;}
+    .deck-shell{min-height:690px;position:relative;display:grid;place-items:center;padding:12px;overflow:hidden;}
+    .deck{position:relative;width:min(520px,100%);height:600px;}
+    .program-card{position:absolute;inset:0;border-radius:32px;padding:22px;background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.06) 42%,rgba(14,22,40,.96));border:1px solid rgba(255,255,255,.16);box-shadow:0 26px 90px rgba(0,0,0,.45);display:flex;flex-direction:column;overflow:hidden;touch-action:none;user-select:none;transform-origin:center 90%;}
+    .program-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 16% 0,rgba(125,211,252,.22),transparent 44%),radial-gradient(circle at 90% 20%,rgba(167,139,250,.19),transparent 35%);pointer-events:none;}
+    .program-card:not(.top){pointer-events:none;}
+    .program-card.stack1{transform:translateY(12px) scale(.97);opacity:.68;filter:saturate(.85);}
+    .program-card.stack2{transform:translateY(24px) scale(.94);opacity:.35;filter:saturate(.7);}
+    .card-content{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100%;}
+    .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;}
+    .day{font-weight:950;letter-spacing:-.02em;font-size:14px;background:rgba(125,211,252,.13);border-color:rgba(125,211,252,.3);color:#dff7ff;}
+    .kind{font-size:12px;text-align:right;color:var(--muted);font-weight:800;max-width:220px;}
+    .program-card h2{font-size:clamp(25px,4.3vw,34px);line-height:1.05;letter-spacing:-.045em;margin:4px 0 10px;}
+    .meta{display:grid;gap:8px;margin:10px 0 12px;color:var(--muted);font-size:14px;line-height:1.35;}
+    .meta div{display:flex;gap:8px;align-items:flex-start;}
+    .summary{font-size:15px;line-height:1.48;color:#edf2ff;margin:8px 0;}
+    .notes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+    .note{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:18px;padding:10px;font-size:12px;line-height:1.38;color:var(--muted);}
+    .note b{display:block;color:var(--text);margin-bottom:3px;}
+    .scores{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;}
+    .score{border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.07);padding:8px 10px;font-size:12px;color:var(--muted);font-weight:800;}
+    .score strong{color:var(--text)}
+    .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:10px;}
+    .tag{font-size:11px;padding:6px 8px;}
+    .family-votes{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;min-height:29px;}
+    .vote-chip{font-size:11px;padding:6px 8px;color:var(--text)}
+    .vote-chip.yes{border-color:rgba(54,211,153,.45);background:rgba(54,211,153,.15)}
+    .vote-chip.no{border-color:rgba(251,113,133,.45);background:rgba(251,113,133,.15)}
+    .vote-chip.maybe{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.15)}
+    .vote-chip.top{border-color:rgba(167,139,250,.5);background:rgba(167,139,250,.18)}
+    .card-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px;}
+    .swipe-badge{position:absolute;z-index:5;top:28px;left:26px;border:4px solid;border-radius:18px;padding:8px 12px;font-size:26px;font-weight:1000;text-transform:uppercase;letter-spacing:.05em;opacity:0;transform:rotate(-12deg);pointer-events:none;background:rgba(0,0,0,.18);}
+    .swipe-badge.yes{color:var(--yes);border-color:var(--yes)} .swipe-badge.no{color:var(--no);border-color:var(--no);left:auto;right:26px;transform:rotate(12deg)} .swipe-badge.maybe{color:var(--maybe);border-color:var(--maybe);top:auto;bottom:28px;left:50%;transform:translateX(-50%)} .swipe-badge.top{color:var(--top);border-color:var(--top);left:50%;transform:translateX(-50%) rotate(-4deg)}
+    .control-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:14px;}
+    .round{width:58px;height:58px;border-radius:50%;font-size:23px;display:inline-grid;place-items:center;padding:0;background:rgba(255,255,255,.1);}
+    .round.no{border-color:rgba(251,113,133,.5)} .round.yes{border-color:rgba(54,211,153,.5)} .round.maybe{border-color:rgba(251,191,36,.5)} .round.top{border-color:rgba(167,139,250,.5)}
+    .empty{max-width:540px;text-align:center;color:var(--muted);padding:40px 14px;}
+    .empty h2{color:var(--text);letter-spacing:-.03em;margin-bottom:8px;}
+    .sidebar{display:grid;gap:14px;}
+    .section-title{font-size:14px;color:#dce6fb;font-weight:950;margin:0 0 10px;letter-spacing:.02em;text-transform:uppercase;}
+    .voter-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;}
+    .voter-row input,.voter-row select{width:100%;min-width:0;}
+    .hint{font-size:12px;line-height:1.45;color:var(--muted);margin:8px 0 0;}
+    .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;}
+    .stat{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:18px;padding:10px;}
+    .stat b{display:block;font-size:22px;letter-spacing:-.04em}.stat span{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;}
+    .list{display:grid;gap:8px;max-height:430px;overflow:auto;padding-right:2px;}
+    .mini{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:18px;padding:10px;display:grid;gap:7px;}
+    .mini-title{font-size:13px;font-weight:900;line-height:1.18}.mini-meta{font-size:11px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}.mini-actions{display:flex;gap:6px;flex-wrap:wrap}.mini-actions button,.mini-actions a{font-size:11px;min-height:30px;padding:6px 8px;}
+    .bar{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;display:flex;}
+    .bar i{display:block;height:100%;}.bar .btop{background:var(--top)}.bar .byes{background:var(--yes)}.bar .bmaybe{background:var(--maybe)}.bar .bno{background:var(--no)}
+    .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(8,12,23,.94);border:1px solid var(--line);border-radius:999px;padding:12px 16px;box-shadow:var(--shadow);z-index:99;opacity:0;pointer-events:none;transition:.2s ease;font-weight:850;color:var(--text);max-width:92vw;text-align:center;}
+    .toast.show{opacity:1;bottom:30px;}
+    .source-list{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.5;}
+    .source-list details{border:1px solid var(--line);border-radius:18px;padding:10px;background:rgba(255,255,255,.045)}
+    .source-list a{color:#dceeff;text-decoration:none}.source-list a:hover{text-decoration:underline}
+    input[type=file]{display:none}
+    @media(max-width:980px){body{padding:12px 10px 32px}.layout{grid-template-columns:1fr}.sidebar{grid-row:auto}.deck-shell{min-height:640px}.deck{height:560px}.program-card{padding:18px}.notes{grid-template-columns:1fr}.kind{max-width:170px}.hero{padding:18px}.panel{padding:12px}.sidebar{grid-template-columns:1fr}.list{max-height:330px}}
+    @media(max-width:520px){.deck{height:610px}.deck-shell{padding:0;min-height:690px}.program-card h2{font-size:26px}.meta{font-size:13px}.summary{font-size:14px}.round{width:52px;height:52px}.filters select,.filters input{min-width:100%;}.hero-actions .button,.hero-actions button{width:100%;justify-content:center}.voter-row{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}.card-actions .button{flex:1;justify-content:center}.program-card{border-radius:28px}}
+
+
+    /* Mobilbarát, fordítható kártya - kevesebb szöveg az előlapon, részletek hátul */
+    .program-card{padding:0;perspective:1200px;}
+    .program-card.flipped{touch-action:pan-y;}
+    .card-inner{position:relative;z-index:1;width:100%;height:100%;transform-style:preserve-3d;transition:transform .34s cubic-bezier(.2,.75,.2,1);}
+    .program-card.flipped .card-inner{transform:rotateY(180deg);}
+    .card-face{position:absolute;inset:0;padding:22px;border-radius:32px;display:flex;flex-direction:column;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+    .card-back{transform:rotateY(180deg);overflow:auto;-webkit-overflow-scrolling:touch;gap:10px;}
+    .front-main{display:flex;flex-direction:column;min-height:100%;}
+    .front-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:auto;padding-top:12px;align-items:center;}
+    .info-toggle{border-color:rgba(125,211,252,.42);background:rgba(125,211,252,.12);}
+    .card-compact-hint{font-size:12px;line-height:1.35;color:var(--muted);margin:10px 0 0;text-align:center;}
+    .card-back h3{font-size:20px;line-height:1.12;letter-spacing:-.035em;margin:0 0 2px;color:var(--text);}
+    .detail-grid{display:grid;gap:9px;}
+    .detail-block{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:18px;padding:10px;font-size:13px;line-height:1.42;color:var(--muted);}
+    .detail-block b{display:block;color:var(--text);margin-bottom:4px;}
+    .detail-block .family-votes{margin-top:0;}
+    .back-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px;}
+    .tap-zone{cursor:pointer;}
+    .program-card.top .tap-zone:active{filter:brightness(1.05);}
+
+    @media(max-width:680px){
+      button,.button,select,input,label.filelabel{min-height:38px;padding:9px 11px;font-size:13px;}
+      .hero{padding:14px;border-radius:24px;}
+      .lead{font-size:13px;line-height:1.42;}
+      .pills{gap:6px;margin-top:12px;}
+      .pill,.tag,.decision-chip,.vote-chip{font-size:11px;padding:6px 8px;}
+      .filters{gap:7px;}
+      .deck-shell{min-height:590px;padding:0;}
+      .deck{height:min(68vh,560px);min-height:500px;width:min(100%,430px);}
+      .card-face{padding:16px;border-radius:28px;}
+      .card-top{gap:8px;margin-bottom:8px;}
+      .day{font-size:11px;padding:6px 8px;}
+      .kind{font-size:11px;line-height:1.25;max-width:138px;}
+      .program-card h2{font-size:clamp(20px,6vw,25px);line-height:1.03;margin:2px 0 8px;letter-spacing:-.045em;}
+      .meta{font-size:12px;line-height:1.27;gap:5px;margin:7px 0 8px;}
+      .meta div{gap:6px;}
+      .summary{font-size:13px;line-height:1.36;margin:6px 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+      .scores{gap:5px;margin:6px 0;}
+      .score{font-size:11px;padding:6px 7px;border-radius:12px;}
+      .front-actions{gap:7px;padding-top:8px;}
+      .card-compact-hint{font-size:11px;margin-top:7px;}
+      .control-row{gap:8px;margin-top:10px;position:sticky;bottom:8px;z-index:12;}
+      .round{width:48px;height:48px;font-size:20px;background:rgba(18,26,46,.9);backdrop-filter:blur(8px);}
+      .detail-block{font-size:12px;padding:9px;border-radius:16px;}
+      .back-actions{gap:7px;}
+      .swipe-badge{font-size:18px;border-width:3px;padding:6px 9px;border-radius:14px;}
+      .tags{gap:4px;}
+      .tag{font-size:10px;padding:5px 6px;}
     }
-    header{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:18px;
-      margin-bottom:14px;
+    @media(max-width:380px){
+      .deck{min-height:480px;}
+      .program-card h2{font-size:20px;}
+      .meta{font-size:11.5px;}
+      .summary{-webkit-line-clamp:2;}
+      .score{font-size:10.5px;}
+      .card-face{padding:14px;}
     }
-    .title h1{
-      margin:0;
-      font-size:clamp(1.5rem,4vw,3rem);
-      letter-spacing:-.04em;
-      line-height:1.03;
-    }
-    .title p{margin:.55rem 0 0;color:var(--muted);font-size:1rem;max-width:760px}
-    .pillbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-    .pill{
-      border:1px solid rgba(60,40,18,.14);
-      background:rgba(255,255,255,.7);
-      border-radius:999px;
-      padding:7px 10px;
-      font-size:.86rem;
-      color:#51463b;
-      white-space:nowrap;
-    }
-    .pill.hot{background:#fff2d2}.pill.rain{background:#e9eefc}.pill.sun{background:#fff8bf}.pill.note{background:#e4f4e9}.pill.unique{background:#f9ded2;color:#7e351c;font-weight:700}
-    .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-    button,.btn{
-      border:0;
-      border-radius:999px;
-      padding:11px 14px;
-      font-weight:750;
-      cursor:pointer;
-      background:#fff;
-      box-shadow:0 6px 16px rgba(0,0,0,.08);
-      color:#26221c;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      transition:transform .16s ease, box-shadow .16s ease, opacity .16s ease;
-    }
-    button:hover,.btn:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(0,0,0,.12)}
-    button:active,.btn:active{transform:translateY(0) scale(.98)}
-    button.ghost{background:rgba(255,255,255,.55);box-shadow:none;border:1px solid rgba(45,32,15,.13)}
-    button.primary{background:var(--accent);color:white}
-    button.no{background:#fff0ef;color:var(--no)}
-    button.yes{background:#ecfff4;color:var(--yes)}
-    button.maybe{background:#fff7dc;color:var(--maybe)}
-    button.top{background:#fff4d8;color:#7b4a00}
-    .layout{display:grid;grid-template-columns: minmax(310px, 1fr) 360px; gap:22px;align-items:start}
-    .panel{
-      background:rgba(255,255,255,.58);
-      border:1px solid rgba(65,45,20,.12);
-      border-radius:var(--radius);
-      backdrop-filter: blur(10px);
-      padding:14px;
-      box-shadow:0 10px 28px rgba(84,58,26,.08);
-    }
-    .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
-    label{font-size:.82rem;color:var(--muted);font-weight:700;display:block;margin:0 0 5px 3px}
-    select,input[type="search"]{
-      width:100%;
-      border:1px solid rgba(45,32,15,.16);
-      border-radius:16px;
-      background:#fffdf8;
-      padding:10px 12px;
-      font-size:.96rem;
-      color:var(--ink);
-      outline:none;
-    }
-    .toggles{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
-    .toggle{
-      user-select:none;
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      padding:9px 10px;
-      border-radius:999px;
-      background:#fffdf8;
-      border:1px solid rgba(45,32,15,.13);
-      font-weight:750;
-      font-size:.86rem;
-      cursor:pointer;
-    }
-    .toggle input{accent-color:var(--accent)}
-    .deck-shell{position:relative;min-height:660px;display:grid;place-items:center;padding:8px 0 0}
-    .card{
-      position:relative;
-      width:min(560px, 100%);
-      min-height:610px;
-      border-radius:34px;
-      background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(255,248,238,.98));
-      box-shadow:var(--shadow);
-      padding:22px;
-      overflow:hidden;
-      touch-action:none;
-      user-select:none;
-      border:1px solid rgba(80,50,20,.14);
-      transform-origin:center 82%;
-      will-change:transform,opacity;
-    }
-    .card::before{
-      content:"";
-      position:absolute;inset:-50% -35% auto auto;
-      width:310px;height:310px;border-radius:50%;
-      background:radial-gradient(circle,#fde7bb 0,#fde7bb 28%,transparent 70%);
-      opacity:.8;
-      pointer-events:none;
-    }
-    .card .ribbon{position:relative;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px;z-index:1}
-    .day-badge{background:#183f38;color:#fff;border-radius:18px;padding:10px 12px;font-weight:900;letter-spacing:-.01em;font-size:.98rem;box-shadow:0 8px 18px rgba(24,63,56,.18)}
-    .kind-badge{background:#ffe7d6;color:#733719;border-radius:18px;padding:10px 12px;font-weight:850;font-size:.88rem;text-align:right;max-width:55%}
-    .card h2{position:relative;z-index:1;margin:12px 0 8px;font-size:clamp(1.7rem,5vw,2.45rem);line-height:1.04;letter-spacing:-.055em}
-    .meta{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0}
-    .meta div{background:rgba(255,255,255,.67);border:1px solid rgba(45,32,15,.1);border-radius:18px;padding:10px;font-size:.9rem;color:#3d3932}
-    .meta b{display:block;color:#211c17;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-    .summary{position:relative;z-index:1;font-size:1.05rem;margin:14px 0;color:#2a251f}
-    .info-box{position:relative;z-index:1;background:#fff7e7;border:1px solid rgba(186,90,49,.18);border-radius:20px;padding:12px;margin:12px 0;font-size:.95rem;color:#40372e}
-    .info-box b{color:#201a14}
-    .chips{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
-    .chip{font-size:.78rem;background:#f0eadf;border:1px solid rgba(50,35,15,.1);border-radius:999px;padding:7px 9px;font-weight:750;color:#574b3d}
-    .chip.unique{background:#ffe2d7;color:#8b3a1d}.chip.kid{background:#e8f6e8;color:#28663b}.chip.senior{background:#e9efff;color:#3450a0}.chip.rain{background:#eef1fa;color:#3c477a}.chip.rating{background:#fff;color:#333}
-    .swipe-stamp{position:absolute;top:120px;font-size:2.8rem;font-weight:1000;letter-spacing:.04em;border:6px solid;border-radius:18px;padding:8px 14px;opacity:0;z-index:3;transform:rotate(-12deg)}
-    .swipe-stamp.yes{left:26px;color:var(--yes)}.swipe-stamp.no{right:26px;color:var(--no);transform:rotate(12deg)}.swipe-stamp.maybe{left:50%;transform:translateX(-50%) rotate(-4deg);color:var(--maybe);top:210px}.swipe-stamp.top{left:50%;transform:translateX(-50%) rotate(4deg);color:#8a5a00;top:70px}
-    .card-actions{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}
-    .card-actions button{justify-content:center;padding:12px 8px;font-size:.88rem}
-    .linkrow{position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
-    .linkrow .btn{font-size:.88rem;padding:10px 12px}
-    .empty{width:min(560px, 100%);min-height:420px;display:grid;place-items:center;text-align:center;background:rgba(255,255,255,.66);border:1px dashed rgba(45,32,15,.22);border-radius:34px;padding:28px;box-shadow:0 10px 26px rgba(84,58,26,.08)}
-    .empty h2{margin:0 0 10px;font-size:2rem;letter-spacing:-.04em}.empty p{margin:.4rem 0;color:var(--muted)}
-    .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
-    .stat{background:#fffdf8;border:1px solid rgba(45,32,15,.12);border-radius:18px;padding:10px;text-align:center}
-    .stat b{display:block;font-size:1.25rem}.stat span{font-size:.75rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.05em}
-    aside h3{margin:10px 4px 8px;font-size:1.1rem;letter-spacing:-.02em}
-    .lists{display:grid;gap:10px}
-    .listbox{background:#fffdf8;border:1px solid rgba(45,32,15,.1);border-radius:22px;padding:12px;min-height:70px;max-height:310px;overflow:auto}
-    .item{border-bottom:1px solid rgba(45,32,15,.09);padding:9px 0;font-size:.9rem}.item:last-child{border-bottom:0}.item b{display:block}.item small{color:var(--muted)}
-    .side-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.side-actions button{font-size:.86rem}
-    .hint{font-size:.86rem;color:var(--muted);background:#fffdf8;border-radius:18px;padding:12px;border:1px solid rgba(45,32,15,.1);margin-top:12px}
-    .sourcebar{margin-top:18px;font-size:.82rem;color:var(--muted)}
-    .sourcebar details{background:rgba(255,255,255,.54);border:1px solid rgba(45,32,15,.1);border-radius:18px;padding:10px 12px}.sourcebar summary{cursor:pointer;font-weight:800;color:#40372e}.sourcebar ul{columns:2;column-gap:25px;padding-left:20px}.sourcebar li{break-inside:avoid;margin:.35rem 0}
-    .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);opacity:0;background:#1f2b28;color:white;border-radius:999px;padding:12px 16px;box-shadow:0 12px 28px rgba(0,0,0,.25);font-weight:800;z-index:50;transition:.25s ease}
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    .minihelp{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0;color:#5d5247;font-size:.86rem}.kbd{border-radius:8px;background:#fff;border:1px solid rgba(45,32,15,.18);padding:2px 7px;font-weight:800}
-    @media (max-width:940px){
-      header{display:block}.top-actions{justify-content:flex-start;margin-top:12px}.layout{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.deck-shell{min-height:620px}.card{min-height:570px}.sourcebar ul{columns:1}aside{order:2}.sidepanel{position:static!important}.stats{grid-template-columns:repeat(5,1fr)}
-    }
-    @media (max-width:560px){
-      .app{padding:14px 10px 24px}.filters{grid-template-columns:1fr}.stats{grid-template-columns:repeat(5,1fr);gap:5px}.stat{padding:8px 4px}.stat b{font-size:1.05rem}.stat span{font-size:.63rem}.panel{padding:10px;border-radius:24px}.deck-shell{min-height:600px}.card{min-height:560px;padding:17px;border-radius:28px}.meta{grid-template-columns:1fr;gap:7px}.kind-badge{max-width:58%;font-size:.78rem;padding:9px}.day-badge{font-size:.86rem;padding:9px}.card-actions{grid-template-columns:repeat(2,1fr)}.swipe-stamp{font-size:2rem}.title p{font-size:.93rem}.pill{font-size:.78rem;padding:6px 8px}
-    }
+
   </style>
 </head>
 <body>
   <div class="app">
     <header>
-      <div class="title">
-        <h1>Noszvaj programválasztó</h1>
-        <p>Tinder-szerű gyors döntő július 12-15-re. Húzd jobbra, ami érdekel, balra, ami nem; lefelé a „talán”, felfelé a „top”. Éttermi kártyákat nem tettem bele.</p>
-        <div class="pillbar" aria-label="Időjárás és fontos jelzések">
-          <span class="pill sun">Júl. 12: 32/17 °C, többnyire napos</span>
-          <span class="pill rain">Júl. 13: 31/17 °C, kevés eső</span>
-          <span class="pill rain">Júl. 14: 30/16 °C, esős időszakok</span>
-          <span class="pill sun">Júl. 15: 26/15 °C, napos</span>
-          <span class="pill unique">Újraellenőrzött egyedi események benne</span>
+      <section class="hero">
+        <h1>Noszvaj családi programválasztó</h1>
+        <p class="lead">Tinder-szerű kártyák július 12–15-re. Mobilon rövid előlapot látsz; középre koppintva vagy a „Több infó” gombbal megfordul a kártya. Válassz családtagot, majd dönthetsz gombbal vagy határozott húzással.</p>
+        <div class="pills">
+          <span class="pill">👥 <strong id="voterCount">0</strong> szavazó</span>
+          <span class="pill">🗂️ <strong id="programCount">0</strong> program</span>
+          <span class="pill">☀️ Júl. 12: 32/17 °C</span>
+          <span class="pill">🌦️ Júl. 13: 31/17 °C</span>
+          <span class="pill">🌧️ Júl. 14: 30/16 °C</span>
+          <span class="pill">☀️ Júl. 15: 26/15 °C</span>
         </div>
-      </div>
-      <div class="top-actions">
-        <button class="ghost" id="shuffleBtn">🔀 Keverés</button>
-        <button class="ghost" id="resetBtn">🧹 Újrakezdés</button>
-      </div>
+        <div class="hero-actions" style="margin-top:16px">
+          <button class="primary" id="copyShortlistBtn">Közös toplista másolása</button>
+          <button id="exportJsonBtn">Szavazatok mentése JSON-ba</button>
+          <label class="filelabel" for="importJsonInput">Szavazatok importálása</label>
+          <input id="importJsonInput" type="file" accept="application/json,.json">
+          <button id="exportCsvBtn">CSV export</button>
+        </div>
+      </section>
     </header>
 
     <main class="layout">
-      <section class="panel" aria-label="Programkártyák">
-        <div class="filters">
-          <div>
-            <label for="dayFilter">Nap</label>
-            <select id="dayFilter">
-              <option value="all">Összes nap</option>
-              <option value="2026-07-12">Júl. 12. vasárnap</option>
-              <option value="2026-07-13">Júl. 13. hétfő</option>
-              <option value="2026-07-14">Júl. 14. kedd</option>
-              <option value="2026-07-15">Júl. 15. szerda</option>
-              <option value="any">Bármelyik nap / szálláson</option>
-            </select>
-          </div>
-          <div>
-            <label for="kindFilter">Jelleg</label>
-            <select id="kindFilter">
-              <option value="all">Összes jelleg</option>
-            </select>
-          </div>
-          <div>
-            <label for="searchBox">Keresés</label>
-            <input id="searchBox" type="search" placeholder="pl. fürdő, Eger, eső">
-          </div>
+      <section class="panel">
+        <div class="filters" aria-label="Szűrők">
+          <select id="dayFilter"><option value="all">Minden nap</option></select>
+          <select id="audienceFilter">
+            <option value="all">Minden célcsoport</option>
+            <option value="kids">Kisgyerekeknek jó</option>
+            <option value="seniors">Időseknek kényelmes</option>
+            <option value="both">Gyerek + idős kompatibilis</option>
+            <option value="unique">Egyedi / dátumhoz kötött</option>
+          </select>
+          <select id="rainFilter">
+            <option value="all">Minden időjárás</option>
+            <option value="rain">Esőterv / beltéri</option>
+            <option value="outdoor">Kültéri</option>
+          </select>
+          <select id="decidedFilter">
+            <option value="open">Csak amit az aktív szavazó még nem döntött el</option>
+            <option value="all">Összes kártya</option>
+            <option value="top">Csak aktív TOP</option>
+            <option value="yes">Csak aktív érdekel</option>
+            <option value="maybe">Csak aktív talán</option>
+            <option value="no">Csak aktív nem</option>
+          </select>
+          <input id="searchInput" type="search" placeholder="Keresés: Eger, kisvonat, fürdő, esőterv...">
         </div>
-        <div class="toggles">
-          <label class="toggle"><input type="checkbox" id="kidsOnly"> gyerekbarát 4+</label>
-          <label class="toggle"><input type="checkbox" id="seniorOnly"> időseknek 4+</label>
-          <label class="toggle"><input type="checkbox" id="uniqueOnly"> egyedi esemény</label>
-          <label class="toggle"><input type="checkbox" id="rainOnly"> esőterv</label>
-          <label class="toggle"><input type="checkbox" id="showDecided"> döntötteket is mutassa</label>
+        <div class="deck-shell">
+          <div id="deckArea" class="deck" aria-live="polite"></div>
         </div>
-        <div class="minihelp"><span><span class="kbd">→</span> érdekel</span><span><span class="kbd">←</span> nem</span><span><span class="kbd">↓</span> talán</span><span><span class="kbd">↑</span> top</span></div>
-        <div class="deck-shell" id="deckShell"></div>
+        <div class="control-row" aria-label="Döntés gombok">
+          <button class="round no" data-decision="no" title="Nem érdekel – balra">✕</button>
+          <button class="round maybe" data-decision="maybe" title="Talán – le">?</button>
+          <button class="round yes" data-decision="yes" title="Érdekel – jobbra">✓</button>
+          <button class="round top" data-decision="top" title="Top program – fel">★</button>
+          <button class="round" id="undoBtn" title="Visszavonás">↶</button>
+        </div>
       </section>
 
-      <aside class="panel sidepanel" aria-label="Döntések összesítése">
-        <div class="stats" id="stats"></div>
-        <h3>Jöhet / top lista</h3>
-        <div class="lists">
-          <div class="listbox" id="yesList"></div>
-          <div class="listbox" id="maybeList"></div>
-        </div>
-        <div class="side-actions">
-          <button class="primary" id="exportCsvBtn">⬇️ CSV export</button>
-          <button class="ghost" id="copyBtn">📋 Lista másolása</button>
-          <button class="ghost" id="undoBtn">↩️ Vissza</button>
-        </div>
-        <div class="hint">
-          <b>Használat:</b> a döntések automatikusan mentődnek ebben a böngészőben. A Waze gomb minden kártyán külön nyílik meg. Nagycsaládos döntéshez add körbe a telefont, mindenki húzzon 5-6 kártyát.
-        </div>
+      <aside class="sidebar">
+        <section class="panel">
+          <h2 class="section-title">Ki szavaz most?</h2>
+          <div class="voter-row">
+            <select id="voterSelect"></select>
+            <button id="resetActiveBtn" class="small danger">Aktív törlése</button>
+          </div>
+          <div class="voter-row">
+            <input id="newVoterInput" placeholder="Új név, pl. Nagypapa">
+            <button id="addVoterBtn" class="small">Hozzáad</button>
+          </div>
+          <p class="hint">Egy eszközön mindenki kiválasztja a nevét és végigpörgeti a kártyákat. Több telefon esetén mindenki exportálhat JSON-t, majd egy telefonon importáljátok össze.</p>
+          <div class="stat-grid" id="stats"></div>
+        </section>
+
+        <section class="panel">
+          <h2 class="section-title">Családi közös lista</h2>
+          <div class="list" id="familyList"></div>
+        </section>
+
+        <section class="panel">
+          <h2 class="section-title">Aktív szavazó döntései</h2>
+          <div class="vote-tools" style="margin-bottom:10px">
+            <button class="small" id="shuffleBtn">Keverés</button>
+            <button class="small" id="showAllBtn">Összes mutatása</button>
+            <button class="small danger" id="resetAllBtn">Minden törlése</button>
+          </div>
+          <div class="list" id="activeList"></div>
+        </section>
       </aside>
     </main>
 
-    <section class="sourcebar">
+    <section class="source-list">
       <details>
-        <summary>Források és ellenőrzési megjegyzés</summary>
-        <p>Frissítve: 2026. július 2. A kártyákba csak programokat és látnivalókat tettem, éttermi részt nem. Noszvaj saját nagyobb fesztiváljai a vizsgált dátum utánra esnek; a július 12-15. közötti egyedi eseményekből a környéken az egri Hamajdlesz Feszt zárónapja, a bogácsi Kamionos Találkozó utolsó napja, az egri nyári ParkKönyvtár/szurkolói zóna és a Bükki Csillagda esti programja került be.</p>
-        <ul id="sourceList"></ul>
+        <summary>Források és frissítési megjegyzések</summary>
+        <p>Az oldal programkártyái nyilvános turisztikai és szolgáltatói oldalak alapján készültek. Indulás előtt a jegyet, nyitvatartást, menetrendet és időjárást külön ellenőrizzétek.</p>
+        <div id="sourceList"></div>
       </details>
     </section>
   </div>
-  <div class="toast" id="toast">Mentve</div>
+  <div id="toast" class="toast"></div>
 
+  <script id="program-data" type="application/json">[{"id":"jul12_meseut","title":"Sárkányvadász Meseút Noszvajon","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Érkezés után / délután, rugalmas","kind":"Gyerekbarát kaland","place":"Noszvaj, Meseút kezdőpont","distance":"0-3 km Noszvajon belül","duration":"1,5-3 óra, rövidíthető","summary":"Falun belüli mesés, keresgélős, próbatételes útvonal. Jó első napra, mert nem kell autózni, a gyerekek azonnal kapnak célokat és feladatokat.","goodFor":"3-6 éveseknek nagyon jó; felnőtteknek kellemes séta; nagymamának a teljes 7 km sok lehet, ezért rövidített verziót javaslok.","watchOut":"A kulcsok/kezdőcsomag átvételi idejét indulás előtt ellenőrizzétek. Hőségben csak árnyékosabb szakaszokat válasszatok.","kids":5,"seniors":3,"rain":false,"unique":false,"waze":"Meseút Noszvaj","source":"Meseút / Noszvaj turizmus","url":"https://www.meseut.hu/sarkanyvadasz-meseut-noszvaj/","tags":["gyerek","séta","helyben","játékos"],"weather":"32/17 °C, többnyire napos – inkább késő délután."},{"id":"jul12_sikfokut","title":"Síkfőkúti-tó, Tórét és nagyon könnyű tóparti séta","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Érkezés után / naplemente előtt","kind":"Könnyű természet","place":"Noszvaj-Síkfőkút","distance":"kb. 3-5 km","duration":"45-90 perc","summary":"Könnyű, pihenős zöld program tóparttal, nagyobb mozgástérrel és fotópontokkal. A szálláshoz közeli, fáradt érkezős napra ideális.","goodFor":"Kisgyerekeknek szaladgálós, időseknek is kényelmesebb, mint egy hosszabb túra.","watchOut":"Napvédő, sapka, víz. Babakocsival/rollerrel csak a könnyű részeket válasszátok.","kids":4,"seniors":5,"rain":false,"unique":false,"waze":"Síkfőkút tó Noszvaj","source":"Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/aktiv-szabadido/","tags":["idősbarát","gyerek","természet","rövid"],"weather":"32/17 °C, többnyire napos – kora reggel vagy késő délután."},{"id":"jul12_delamotte","title":"De la Motte-kastély és kastélykert","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"11:00-16:00 körül, ellenőrzéssel","kind":"Kultúra / idősbarát","place":"Noszvaj, Dobó István u. 10.","distance":"Noszvajon belül","duration":"45-75 perc","summary":"Rövid, elegáns kastélyprogram, ami a szülőknek és nagymamának kényelmesebb választás. Gyerekekkel is működik, de inkább rövid látogatásként.","goodFor":"Idősebbeknek nagyon jó; gyerekeknek akkor jó, ha nem túl hosszú a vezetés és van utána szaladgálás.","watchOut":"Hétfő-kedd jellemzően zárva, ezért vasárnap vagy szerda jobb. Rendezvény miatt időnként változhat a látogathatóság.","kids":2,"seniors":5,"rain":true,"unique":false,"waze":"De la Motte kastély Noszvaj Dobó István utca 10","source":"Noszvaj turizmus / Tündérkert Hotel","url":"https://turizmus.noszvaj.hu/de-la-motte-kastely/","tags":["idősbarát","beltéri","kultúra","rövid"],"weather":"32/17 °C – hőségben jó rövid beltéri megálló."},{"id":"jul12_barlanglakasok","title":"Noszvaji barlanglakások és Farkaskő Alkotótelep","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Délelőtt vagy késő délután","kind":"Különleges hely / séta","place":"Noszvaj, Pocem környéke","distance":"Noszvajon belül","duration":"45-90 perc","summary":"Rövid, látványos noszvaji különlegesség tufába vájt lakásokkal és művésztelepi hangulattal. Fotós, beszélgetős, nem túl hosszú program.","goodFor":"Felnőtteknek és idősebbeknek érdekes; gyerekeknek barlangszerű terek miatt izgalmas, de nem klasszikus játszós program.","watchOut":"Egyenetlen talaj lehet. Nagymamának csak a könnyen megközelíthető részeket válasszátok.","kids":3,"seniors":3,"rain":false,"unique":false,"waze":"Noszvaji barlanglakások","source":"Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/barlanglakasok/","tags":["különleges","rövid","fotós","helyben"],"weather":"32/17 °C – hőségben ne délben menjetek."},{"id":"jul12_ludas_matyi","title":"Hamajdlesz Feszt: Lúdas Matyi meseelőadás","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"17:00","kind":"Egyedi helyi esemény / családi színház","place":"Civil Közösségek Háza, Eger, Kossuth Lajos u. 12.","distance":"kb. 12-15 km","duration":"kb. 60-90 perc + utazás","summary":"Az egyik legjobb dátumhoz kötött találat: családoknak és gyerekeknek ajánlott Lúdas Matyi-előadás az egri Hamajdlesz Feszt zárónapján.","goodFor":"3-6 éveseknél a mese és a rövid színházi forma miatt jó esélyes. Felnőtteknek is vállalható, ha Eger felé mennétek.","watchOut":"Jegyet/ülőhelyet előre nézzetek. A 17:00 időpont belecsúszhat a vacsorába a szálláson.","kids":5,"seniors":4,"rain":true,"unique":true,"waze":"Civil Közösségek Háza Eger Kossuth Lajos utca 12","source":"Visit Eger","url":"https://visiteger.com/programok/osszes/hamajdlesz-2026-ludas-matyi-07-12","tags":["egyedi esemény","gyerek","színház","Eger"],"weather":"32/17 °C – beltéri/udvari program, melegben is jobb, mint túrázni."},{"id":"jul12_pustol","title":"Hamajdlesz Feszt: Pustol a hó – Szarvas Józsi önálló est","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"19:00","kind":"Egyedi helyi esemény / felnőtt színház","place":"Civil Közösségek Háza, Eger, Kossuth Lajos u. 12.","distance":"kb. 12-15 km","duration":"kb. 90 perc + utazás","summary":"Dátumhoz kötött esti színházi program, inkább felnőtteknek, szülőknek és nagyszülőknek. A kisgyerekes teljes csapatnak valószínűleg kevésbé praktikus.","goodFor":"Idősebbeknek és felnőtteknek jó; a 3-6 éveseknek nem ideális.","watchOut":"A vacsora és altatás miatt csak akkor jó, ha kisebb felnőtt csapat menne át Egerbe.","kids":1,"seniors":4,"rain":true,"unique":true,"waze":"Civil Közösségek Háza Eger Kossuth Lajos utca 12","source":"Visit Eger","url":"https://visiteger.com/programok/osszes/hamajdlesz-2026-pustol-a-ho","tags":["egyedi esemény","felnőtt","színház","Eger"],"weather":"32/17 °C – esti, hűvösebb idősáv."},{"id":"jul12_bogacs_kamion","title":"Bogácsi Kamionos Találkozó – utolsó nap","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Napközben, részletes program ellenőrzéssel","kind":"Egyedi helyi esemény / járműves családi program","place":"Bogács Rendezvénypark","distance":"kb. 12-15 km","duration":"1,5-3 óra","summary":"A környék egyik konkrét, utazási időszakra eső eseménye. A kamionok és járművek miatt a gyerekeknek látványos lehet, és Bogácson fürdőzéssel is kombinálható.","goodFor":"Járműrajongó gyerekeknek nagyon jó; idősebbeknek akkor, ha nem túl hangos/napos.","watchOut":"Utolsó nap, ezért a pontos napi programot külön ellenőrizzétek. Hőségben legyen sapka, víz, árnyék.","kids":5,"seniors":2,"rain":false,"unique":true,"waze":"Bogács Rendezvénypark","source":"Bogács hivatalos eseménynaptár","url":"https://bogacs.hu/kamionos-talalkozo","tags":["egyedi esemény","gyerek","jármű","Bogács"],"weather":"32/17 °C – meleg, déli hőséget kerüljétek."},{"id":"jul12_bogacs_furdo","title":"Bogácsi Gyógy- és Strandfürdő","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Délelőtt vagy délután","kind":"Fürdő / családi pihenő","place":"Bogács, Fürdő u. 2.","distance":"kb. 12-15 km","duration":"2-4 óra","summary":"Biztonsági családi program meleg napra: pancsolás a gyerekeknek, gyógyvizesebb pihenés a felnőtteknek és idősebbeknek.","goodFor":"Gyerekeknek és időseknek is jó, ha mindenki bírja a meleget és van árnyékos pihenés.","watchOut":"Vasárnap zsúfoltabb lehet. Úszógumi/karúszó, papucs, UV-védelem.","kids":5,"seniors":4,"rain":true,"unique":false,"waze":"Bogácsi Gyógy- és Strandfürdő","source":"Bogácsi Gyógy- és Strandfürdő","url":"https://bogacsigyogyfurdo.hu/","tags":["fürdő","gyerek","idősbarát","melegben jó"],"weather":"32/17 °C – klasszikus meleg napi B-terv."},{"id":"jul12_eger_szurkolozona","title":"Egri vb-szurkolói zóna a Végvári vitézek terén","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Esti meccsek: jellemzően 18:00 és 21:00","kind":"Nyári esti helyi hangulat","place":"Eger, Végvári vitézek tere","distance":"kb. 12-15 km","duration":"1-2 óra, bármikor otthagyható","summary":"Nyári városi hangulat óriáskivetítővel. Inkább spontán felnőtt/fiatalos esti program, nem a teljes kisgyerekes csapatnak.","goodFor":"Felnőtteknek és nagyobb gyerekeknek; 3-6 éveseknek zajos és késői lehet.","watchOut":"A késői kezdés miatt altatással ütközhet. Tömeg, zaj, esti parkolás.","kids":2,"seniors":3,"rain":false,"unique":true,"waze":"Végvári vitézek tere Eger","source":"Visit Eger","url":"https://visiteger.com/programok/helyi/labdarugo-vilagbajnoksag-2026","tags":["egyedi szezonális","Eger","esti","felnőtt"],"weather":"32/17 °C – estére kellemesebb."},{"id":"jul12_felsotarkany_kisvasut","title":"Felsőtárkányi erdei kisvasút + tópart","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Vasárnap napközben, menetrend ellenőrzéssel","kind":"Kisvasút / könnyű természet","place":"Felsőtárkány, Ifjúság út 31. környéke","distance":"kb. 10-15 km","duration":"1,5-3 óra","summary":"Közelebbi alternatíva a szilvásváradi kisvasútra: erdei kisvasút, tópart, rövidebb logisztika. Érkezős napon is vállalhatóbb lehet, ha van energiátok.","goodFor":"Kisgyerekeknek a vonat miatt nagyon jó, időseknek is kényelmesebb, ha nem vállaltok hosszú sétát.","watchOut":"A menetrend hétvégékhez és ünnepnapokhoz kötődik; indulás előtt nézzétek meg az aznapi járatokat.","kids":5,"seniors":4,"rain":false,"unique":false,"waze":"Felsőtárkányi Állami Erdei Vasút Ifjúság út 31","source":"kisvasut.hu / Felsőtárkány","url":"https://www.kisvasut.hu/index.php?rfa=169","tags":["kisvasút","gyerek","idősbarát","természet","közeli"],"weather":"32/17 °C, többnyire napos – déli hőséget kerüljétek."},{"id":"jul13_eger_var","title":"Egri vár + Dobó tér rövid belvárosi kör","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Délelőtt, 9:30-12:30 körül","kind":"Kultúra / városi séta","place":"Eger, Vár köz 1.","distance":"kb. 12-15 km","duration":"2-3 óra, rövidíthető","summary":"Eger klasszikus családi főprogramja: várfalak, ágyúk, kilátás, majd rövid belvárosi séta. A gyerekeknek a vár kalandos, a nagyszülőknek történelmi.","goodFor":"Minden korosztálynak ad valamit, de lépcsők és kövek miatt nagymamának rövidített útvonal ajánlott.","watchOut":"Hétfőn is indulás előtt ellenőrizzétek az aktuális belépést/kiállításokat. A várban kevés árnyék lehet.","kids":4,"seniors":3,"rain":false,"unique":false,"waze":"Egri vár Eger Vár köz 1","source":"Egri Vár / Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/egri-var","tags":["Eger","kultúra","klasszikus","kilátás"],"weather":"31/17 °C, kevés eső – délelőtt, esőkabáttal."},{"id":"jul13_parkkonyvtar","title":"Bródy ParkKönyvtár az Érsekkertben","day":"Júl. 13. hétfő","date":"2026-07-13","time":"9:00-11:00, jó idő esetén","kind":"Szezonális családi program / park","place":"Eger, Érsekkert, szökőkút környéke","distance":"kb. 12-15 km","duration":"45-90 perc","summary":"Nyári kültéri olvasó- és társasjátékozó pont a parkban. Jól párosítható az egri várral, fürdővel vagy belvárosi sétával.","goodFor":"Gyerekeknek nyugodt, árnyékosabb, leülős program; nagyszülőknek is kényelmes.","watchOut":"Csak jó időben és hétköznap 9-11 között működik. Eső esetén ne erre építsetek.","kids":4,"seniors":5,"rain":false,"unique":true,"waze":"Érsekkert Eger","source":"Visit Eger","url":"https://visiteger.com/programok/helyi/brody-parkkonyvtar-az-ersekkertben-2026","tags":["egyedi szezonális","gyerek","idősbarát","Eger"],"weather":"31/17 °C, kevés eső – csak jó időben."},{"id":"jul13_egri_termal","title":"Egri Termál- és Strandfürdő","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Ebéd után / délután","kind":"Fürdő / pihenős családi program","place":"Eger, Petőfi tér 2.","distance":"kb. 12-15 km","duration":"2-4 óra","summary":"Klasszikus meleg napi program Egerben. Jó, ha a városnézés után mindenki pihenne, és kell gyerekbarátabb, vízi program.","goodFor":"Gyerekeknek és idősebbeknek is jó, ha nem túl zsúfolt. Nagymamának árnyékos pihenőhely legyen.","watchOut":"A csapat nagy, ezért legyen találkozópont és karkötős/telefonszámos megoldás a gyerekeknél.","kids":5,"seniors":4,"rain":true,"unique":false,"waze":"Egri Termálfürdő Eger Petőfi tér 2","source":"Visit Eger / Egri Termálfürdő","url":"https://visiteger.com/latnivalok/elmenyek/furdozes/termalfurdo","tags":["fürdő","gyerek","idősbarát","Eger"],"weather":"31/17 °C, kevés eső – melegben jó, zápor esetén is vállalható."},{"id":"jul13_kopcsik","title":"Kopcsik Marcipánia és Harangöntő-ház","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Dél körül / eső esetén","kind":"Beltéri apró csoda / rövid múzeum","place":"Eger, Harangöntő u. 4.","distance":"kb. 12-15 km","duration":"30-60 perc","summary":"Rövid beltéri látványprogram marcipánból készült alkotásokkal. Jó eső- vagy hőségszünet a belvárosban.","goodFor":"Gyerekeknek látványos, időseknek kényelmes, de nem egész napos program.","watchOut":"Nyitvatartást ellenőrizzétek, mert rövid látogatásként érdemes beilleszteni.","kids":4,"seniors":4,"rain":true,"unique":false,"waze":"Kopcsik Marcipánia Eger Harangöntő utca 4","source":"Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/kopcsik-marcipania","tags":["beltéri","gyerek","idősbarát","rövid"],"weather":"31/17 °C, kevés eső – jó esőszünet."},{"id":"jul13_sodomb","title":"Egerszalóki Sódomb naplementés sétával","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Késő délután / naplemente","kind":"Könnyű látványosság","place":"Egerszalók, Sódomb","distance":"kb. 20-25 km","duration":"45-90 perc","summary":"Rövid, látványos, sok utazás nélküli kiruccanás. Naplemente felé szebb és hűvösebb, nagyszülőknek is könnyebben vállalható.","goodFor":"Időseknek jó, gyerekeknek rövid ideig érdekes, fotózós megállóként működik.","watchOut":"A sétányon tartsátok be a kijelölt útvonalat. Esőben csúszós lehet.","kids":3,"seniors":5,"rain":false,"unique":false,"waze":"Egerszalók Sódomb","source":"Egerszalók / Saliris térség","url":"https://www.egerszalok.hu/hu/turisztika/latnivalok/sodomb","tags":["idősbarát","rövid","fotós","naplemente"],"weather":"31/17 °C, kevés eső – naplementénél jobb."},{"id":"jul13_demjen","title":"Demjéni Cascade Barlang- és Élményfürdő","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Délután / eső esetén","kind":"Fürdő / beltéri élmény","place":"Demjén, Cascade Barlangfürdő","distance":"kb. 25-30 km","duration":"2-4 óra","summary":"Erős esőterv: barlangfürdős, látványos vízi program, ami kevésbé időjárásfüggő. A gyerekeknek nagy élmény lehet, felnőtteknek pihentető.","goodFor":"Gyerekeknek nagyon jó, idősebbeknek akkor, ha szeretik a fürdőt és a párás-barlangos hangulatot.","watchOut":"Csúszásveszély, tömeg, meleg-párás levegő. A nagymama komfortját külön nézzétek.","kids":5,"seniors":3,"rain":true,"unique":false,"waze":"Cascade Barlangfürdő Demjén","source":"Demjén Cascade","url":"https://demjencascade.hu/","tags":["esőterv","fürdő","gyerek","beltéri"],"weather":"31/17 °C, kevés eső – esős délutánra jó."},{"id":"jul13_varos_a_varos_alatt","title":"Város a Város Alatt – egri érseki pincerendszer","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Délelőtt vagy esős délután; vezetések egész órakor","kind":"Beltéri különlegesség / hűvös pince","place":"Eger, Eszterházy tér, Bazilika lépcsője mellett","distance":"kb. 12-15 km","duration":"45-50 perc + belvárosi séta","summary":"Eger egyik legjobb eső- és hőségprogramja: a város alatti egykori érseki pincerendszer. Állandóan hűvös, rövid és látványos, ezért nagy vegyes családnak is jó kompromisszum.","goodFor":"Időseknek nagyon jó, mert rövid és beltéri; gyerekeknek izgalmas a barlangszerű hangulat, de pulóver kell.","watchOut":"A pince kb. 12 °C, vigyetek pulóvert. A vezetés időpontját és jegyet indulás előtt ellenőrizzétek.","kids":4,"seniors":5,"rain":true,"unique":false,"waze":"Város a Város Alatt Eger Eszterházy tér","source":"Eger.hu / Város a Város Alatt","url":"https://www.eger.hu/hu/varos/latnivalok-32/varos-a-varos-alatt","tags":["Eger","beltéri","idősbarát","különleges","hőségben jó"],"weather":"31/17 °C, kevés eső – kifejezetten jó hőség/eső program."},{"id":"jul13_szepasszony_volgy_kisvonat","title":"Szépasszony-völgy + egri városnéző kisvonat","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Délután vagy kora este, jó időben","kind":"Könnyű városi élmény / borvidéki hangulat","place":"Eger, Szépasszony-völgy","distance":"kb. 15-18 km","duration":"1,5-3 óra","summary":"Nem étteremként, hanem hangulatos családi sétaként vettem fel: kisvonatozás, rövid séta a völgyben, felnőtteknek boros hangulat, gyerekeknek vonatozás és nézelődés.","goodFor":"Időseknek kényelmes, gyerekeknek a kisvonat miatt jó. A boros rész inkább felnőtteknek.","watchOut":"A kisvonat időjárásfüggő, nyáron és jó időben jár. A késő esti borozást a kisgyerekek altatásával egyeztessétek.","kids":4,"seniors":5,"rain":false,"unique":false,"waze":"Szépasszony-völgy Eger","source":"Visit Eger / Városnéző kisvonat","url":"https://visiteger.com/hasznos/kozlekedes/varosnezo-kisvonat","tags":["Eger","kisvonat","idősbarát","felnőtt","könnyű"],"weather":"31/17 °C, kevés eső – akkor jó, ha szárazabb délutáni ablak van."},{"id":"jul13_varazstorony","title":"Egri Varázstorony, Camera Obscura és kísérletek","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Délelőtt vagy esős délután, nyitvatartás ellenőrzéssel","kind":"Beltéri élmény / tudományos játék","place":"Eger, Líceum, Eszterházy tér 1.","distance":"kb. 12-15 km","duration":"60-90 perc","summary":"Tudományos, kísérletezős, nézelődős egri program. Esőben vagy nagy melegben jó mentőötlet, főleg ha a gyerekek szeretik a mozgatható, látványos dolgokat.","goodFor":"Gyerekeknek jó, ha bírják a lépcsőzést és a múzeumi figyelmet. Időseknek csak akkor, ha a lépcsők nem gond.","watchOut":"A Camera Obscura napos időben a leglátványosabb, és a hely nem igazán akadálymentes; lépcsőkre számítsatok.","kids":4,"seniors":2,"rain":true,"unique":false,"waze":"Varázstorony Eger Eszterházy tér 1","source":"Egri Csillagvizsgáló és Tudományos Élményközpont","url":"https://www.egricsillagvizsgalo.hu/","tags":["Eger","beltéri","gyerek","tudomány","lépcsős"],"weather":"31/17 °C, kevés eső – esőben is jó, de Camera Obscura napfényben erősebb."},{"id":"jul13_eger_kisvonat_belvaros","title":"Egri városnéző kisvonat – gyors városnézés gyerekekkel és nagyszülőkkel","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Napközben, egész órás indulásokhoz igazítva","kind":"Könnyű városnézés / idősbarát","place":"Eger, belváros – Szépasszony-völgy útvonal","distance":"kb. 12-15 km","duration":"40-80 perc, egyirányú vagy retúr","summary":"Nagy családnál sok lépcsőt és hosszas belvárosi gyaloglást spórolhat. Jó összekötő program az Egri Termál, Dobó tér vagy Szépasszony-völgy között.","goodFor":"Kisgyerekeknek és időseknek is nagyon kényelmes, mert ülős, látványos és rövid.","watchOut":"Jó időhöz kötött nyitott kisvonat; tömeg esetén várakozás lehet.","kids":5,"seniors":5,"rain":false,"unique":false,"waze":"Egri városnéző kisvonat Egészségház utca Eger","source":"Visit Eger / Városnéző kisvonat","url":"https://visiteger.com/hasznos/kozlekedes/varosnezo-kisvonat","tags":["Eger","kisvonat","idősbarát","gyerek","könnyű"],"weather":"31/17 °C, kevés eső – száraz időben jó."},{"id":"jul13_minaret_doboter","title":"Egri minaret + Dobó tér mini-kör","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Kora délelőtt vagy késő délután","kind":"Rövid városi különlegesség / kilátás","place":"Eger, Knézich Károly u. 1.","distance":"kb. 12-15 km","duration":"30-75 perc","summary":"Rövid, ikonikus egri megálló. A minaret kívülről is érdekes; aki bírja, felmehet a nagyon szűk lépcsőn, a többiek Dobó téren pihenhetnek.","goodFor":"Felnőtteknek és nagyobb gyerekeknek jó. Nagymamának a felmenet nem ajánlott, kívülről viszont szép rövid megálló.","watchOut":"Meredek, szűk csigalépcső; 3-6 évesekkel csak nagyon óvatosan, sokaknak elég kívülről megnézni.","kids":2,"seniors":1,"rain":false,"unique":false,"waze":"Egri minaret Knézich Károly utca 1 Eger","source":"Visit Eger / Minaret","url":"https://visiteger.com/latnivalok/top-10-latnivalo/minaret","tags":["Eger","kilátás","rövid","lépcsős","óvatosan"],"weather":"31/17 °C, kevés eső – esőben és hőségben kevésbé jó."},{"id":"jul13_gardonyi_emlekhaz","title":"Gárdonyi Géza Emlékház és Gárdonyi-kert","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Vár után rövid, nyugodt kiegészítőként","kind":"Kultúra / csendes kert","place":"Eger, Gárdonyi Géza u. 28.","distance":"kb. 12-15 km","duration":"45-90 perc","summary":"Az Egri csillagok miatt tematikusan jól kapcsolódik a várhoz, de sokkal nyugodtabb. A kert miatt a gyerekeknek is könnyebb elviselni, mint egy hosszú múzeumot.","goodFor":"Szülőknek, nagyszülőknek jó; gyerekekkel röviden és kerti pihenővel működik.","watchOut":"A gyerekek figyelmi idejéhez igazítsátok; a teljes családdal inkább rövid kiegészítő legyen.","kids":3,"seniors":4,"rain":true,"unique":false,"waze":"Gárdonyi Géza Emlékház Eger","source":"Egri Vár / Gárdonyi Emlékház","url":"https://egrivar.hu/c/nyitvatartas","tags":["Eger","kultúra","idősbarát","csendes","kert"],"weather":"31/17 °C, kevés eső – rövid beltéri/kerti kiegészítő."},{"id":"jul13_ersekkert_jatszoter","title":"Érsekkert árnyékos játszóteres pihenő Egerben","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Vár vagy belváros után levezetésként","kind":"Park / gyerekbarát pihenő","place":"Eger, Érsekkert","distance":"kb. 12-15 km","duration":"45-120 perc","summary":"Nagy családos napmentő: árnyék, séta, játszótér, padok. Jó pufferprogram, ha a gyerekeknek mozgás kell, a nagyszülőknek pedig pihenő.","goodFor":"Gyerekeknek top, időseknek is kényelmes, mert lehet ülni és nem kell belépőhöz/időponthoz alkalmazkodni.","watchOut":"Esőben nem jó; kullancs- és szúnyogriasztó hasznos lehet.","kids":5,"seniors":4,"rain":false,"unique":false,"waze":"Érsekkert Eger","source":"Visit Eger / Bródy ParkKönyvtár és Érsekkert","url":"https://visiteger.com/programok/helyi/brody-parkkonyvtar-az-ersekkertben","tags":["Eger","park","gyerek","idősbarát","ingyenes"],"weather":"31/17 °C, kevés eső – árnyékos időszakban ideális."},{"id":"jul14_szalajka","title":"Szalajka-völgy és Szilvásváradi Erdei Kisvasút","day":"Júl. 14. kedd","date":"2026-07-14","time":"Délelőtt, ha nem esik tartósan","kind":"Nagy családi kirándulás / kisvasút","place":"Szilvásvárad, Szalajka út 6.","distance":"kb. 35-40 km","duration":"3-5 óra","summary":"A legerősebb klasszikus gyerekes kirándulás a környéken: kisvasút, Fátyol-vízesés, könnyű völgyi séta. Nagy csapatnál is jól működik, mert részekre bontható.","goodFor":"Gyerekeknek top program; nagyszülőknek a kisvasút miatt kényelmesebb, de a séta hosszát okosan kell választani.","watchOut":"Keddre esős időszakok látszanak, ezért csak rugalmasan. Menetrendet az adott napra válasszátok ki indulás előtt.","kids":5,"seniors":4,"rain":false,"unique":false,"waze":"Szilvásváradi Állami Erdei Vasút Szalajka út 6","source":"Szilvásvárad hivatalos / Egererdő","url":"https://www.szilvasvarad.hu/hu/szilvasvaradi-allami-erdei-vasut","tags":["top gyerek","kisvasút","természet","nagy program"],"weather":"30/16 °C, esős időszakok – csak esőablakban."},{"id":"jul14_bukkicsillagda_day","title":"Bükki Csillagda nappali látogatás","day":"Júl. 14. kedd","date":"2026-07-14","time":"Délelőtt vagy kora délután","kind":"Beltéri tudomány / esőterv","place":"Répáshuta, Bükki Csillagda","distance":"kb. 35-45 km","duration":"2-3 óra + utazás","summary":"Esősebb napra jó alternatíva: csillagászati, planetáriumos, tudományos élmény. A 3 éveseknek lehet hosszú, a 6 éveseknek már sokkal jobb.","goodFor":"Felnőtteknek, nagyszülőknek és nagyobb gyerekeknek jó; 3-4 éveseknek csak akkor, ha bírják a nyugodtabb programot.","watchOut":"Jegy/turnus ellenőrzés szükséges. Hegyvidéki út, indulásnál számoljatok tartalék idővel.","kids":3,"seniors":4,"rain":true,"unique":false,"waze":"Bükki Csillagda Répáshuta","source":"Bükki Csillagda / BNPI","url":"https://www.bukkicsillagda.hu/","tags":["esőterv","beltéri","tudomány","nagyobb gyerek"],"weather":"30/16 °C, esős időszakok – jó beltéri B-terv."},{"id":"jul14_bogacs_fedett","title":"Bogács fürdő – fedettebb, rövidebb esőterv","day":"Júl. 14. kedd","date":"2026-07-14","time":"Esősebb délután","kind":"Fürdő / esőterv","place":"Bogács, Gyógy- és Strandfürdő","distance":"kb. 12-15 km","duration":"2-3 óra","summary":"Ha a Szalajka-völgyet elmossa az eső, Bogács a közeli, egyszerűbb B-terv. Nem kell messzire menni, a gyerekek lemozogják magukat.","goodFor":"Gyerekeknek jó, időseknek is pihentető lehet, ha nem túl zsúfolt.","watchOut":"Esőben is lehet tömeg. Papucs, törölköző, meleg váltóruha a gyerekeknek.","kids":5,"seniors":4,"rain":true,"unique":false,"waze":"Bogácsi Gyógy- és Strandfürdő","source":"Bogácsi Gyógy- és Strandfürdő","url":"https://bogacsigyogyfurdo.hu/","tags":["esőterv","fürdő","közeli","gyerek"],"weather":"30/16 °C, esős időszakok – erős B-terv."},{"id":"jul14_belapatfalva","title":"Bélapátfalva: ciszterci apátság + tóparti rövid séta","day":"Júl. 14. kedd","date":"2026-07-14","time":"Délelőtt vagy délután, esőablakban","kind":"Kultúra + könnyű természet","place":"Bélapátfalva, apátság és tó","distance":"kb. 35-40 km","duration":"2-3 óra + utazás","summary":"Csendesebb, nagyszülőbarátabb alternatíva Szilvásvárad környékén: apátság, tó, rövid séta, kevesebb inger.","goodFor":"Időseknek és felnőtteknek nagyon jó; gyerekeknek rövidebb, szabad mozgással kombinálva működik.","watchOut":"Esőben a tópart kevésbé jó. Nagy csapatnál parkolást és mosdót előre gondoljatok át.","kids":3,"seniors":5,"rain":false,"unique":false,"waze":"Bélapátfalvai Ciszterci Apátság","source":"Bélapátfalva / Bükk térség","url":"https://www.belapatfalva.hu/","tags":["idősbarát","kultúra","tó","csendes"],"weather":"30/16 °C, esős időszakok – rövid esőablakban."},{"id":"jul14_erseki_palota","title":"Érseki Palota Turisztikai Látogatóközpont, Eger","day":"Júl. 14. kedd","date":"2026-07-14","time":"Esős időben / délelőtt","kind":"Beltéri kultúra / idősbarát","place":"Eger, Széchenyi u. 1.","distance":"kb. 12-15 km","duration":"1-2 óra","summary":"Kényelmesebb egri beltéri program felnőtteknek és nagyszülőknek. Jó, ha az eső miatt nem akartok hegyi vagy völgyi programot.","goodFor":"Időseknek jó; a kisebb gyerekeknek csak rövidebb beiktatásként.","watchOut":"A gyerekek figyelmi idejéhez igazítsátok, és legyen utána mozgásos program.","kids":2,"seniors":5,"rain":true,"unique":false,"waze":"Érseki Palota Turisztikai Látogatóközpont Eger","source":"Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/erseki-palota","tags":["beltéri","idősbarát","kultúra","Eger"],"weather":"30/16 °C, esős időszakok – jó esőprogram."},{"id":"jul14_beatles","title":"Egri Road Beatles Múzeum","day":"Júl. 14. kedd","date":"2026-07-14","time":"Esős délután / felnőtt mini-program","kind":"Beltéri nosztalgia / felnőtt program","place":"Eger, Csiky Sándor u. 30.","distance":"kb. 12-15 km","duration":"60-90 perc","summary":"Jó kis felnőtt/nagyszülő nosztalgia, ha a gyerekek egyik része pihen vagy alszik. Nem elsődleges 3-6 éves program, de esőben mentőötlet.","goodFor":"Felnőtteknek és időseknek érdekes; kisgyerekeknek inkább csak röviden.","watchOut":"Nyitvatartást ellenőrizzétek. Nagy családi csapatnak csak akkor jó, ha mindenki szereti a témát.","kids":2,"seniors":4,"rain":true,"unique":false,"waze":"Egri Road Beatles Múzeum Eger Csiky Sándor utca 30","source":"Egri Road / Visit Eger","url":"https://www.egerbeatlesmuseum.hu/","tags":["beltéri","felnőtt","nosztalgia","Eger"],"weather":"30/16 °C, esős időszakok – jó felnőtt esőprogram."},{"id":"jul14_zsory_furdo","title":"Zsóry Gyógy- és Strandfürdő, Mezőkövesd","day":"Júl. 14. kedd","date":"2026-07-14","time":"Esős/meleg napon félnapos fürdős B-terv","kind":"Fürdő / gyerek és nagyszülő kompatibilis","place":"Mezőkövesd-Zsóry, Napfürdő út 2.","distance":"kb. 20-25 km","duration":"3-5 óra","summary":"Nagyobb fürdős alternatíva Bogács/Egerszalók mellett: sok medencével, gyerekes és gyógyvizes iránnyal. Esős keddi napra jó családi mentőprogram lehet.","goodFor":"Kisgyerekeknek és időseknek is jó, mert a csapat szét tud válni gyerekmedencés és nyugisabb részekre.","watchOut":"Belépő, medencenyitás és csúszdák aktuális rendje indulás előtt ellenőrizendő.","kids":5,"seniors":4,"rain":true,"unique":false,"waze":"Zsóry Gyógy- és Strandfürdő Mezőkövesd","source":"Zsóry fürdő / Mezőkövesd","url":"https://www.zsory-furdo.hu/","tags":["fürdő","gyerek","idősbarát","esőterv","Mezőkövesd"],"weather":"30/16 °C, esős időszakok – jó B-terv."},{"id":"jul14_subalyuk_muzeum","title":"Suba-lyuk Múzeum és Látogatóközpont, Cserépfalu","day":"Júl. 14. kedd","date":"2026-07-14","time":"Délelőtt vagy esős délután, nyitvatartás ellenőrzéssel","kind":"Beltéri természetismeret / rövid múzeum","place":"Cserépfalu, Suba-lyuk Múzeum","distance":"kb. 8-12 km","duration":"45-90 perc","summary":"Közeli, rövid, esőben is használható program a Bükkalja őskori és barlangos világával. Jó akkor, ha nem akartok messzire menni.","goodFor":"Időseknek kényelmesebb beltéri program; gyerekeknek barlangos/ősemberes téma miatt érdekes lehet.","watchOut":"Nyitvatartást ellenőrizni kell; a tényleges barlangos túrát kisgyerekekkel és nagymamával külön mérlegeljétek.","kids":3,"seniors":4,"rain":true,"unique":false,"waze":"Suba-lyuk Múzeum Cserépfalu","source":"Suba-lyuk Múzeum / Cserépfalu","url":"https://www.museum.hu/muzeum/1463/Suba-lyuk_Muzeum_es_Latogatokozpont","tags":["beltéri","közeli","idősbarát","gyerek","esőterv"],"weather":"30/16 °C, esős időszakok – jó rövid esőprogram."},{"id":"jul14_horvolgy_oszlai","title":"Hór-völgy és Oszlai Tájház – rövid, csendes kirándulás","day":"Júl. 14. kedd","date":"2026-07-14","time":"Csak szárazabb időablakban","kind":"Csendes természet / tájház","place":"Cserépfalu, Hór-völgy / Oszlai Tájház környéke","distance":"kb. 10-18 km","duration":"1,5-3 óra","summary":"Kevésbé tömeges, lassabb tempójú bükki program. Jó alternatíva, ha Szalajka túl messze vagy túl zsúfolt, de kell egy zöld, nyugodt fél nap.","goodFor":"Felnőtteknek, szülőknek és nagyszülőknek kellemes; gyerekeknek akkor jó, ha kapnak kincskeresős feladatot.","watchOut":"Eső után saras lehet, babakocsival nem minden rész kényelmes. A tájház nyitvatartását előre nézzétek.","kids":3,"seniors":3,"rain":false,"unique":false,"waze":"Oszlai Tájház Cserépfalu Hór-völgy","source":"Bükkalja / Oszlai Tájház","url":"https://www.programturizmus.hu/partner-oszlai-tajhaz-cserepfalu.html","tags":["természet","csendes","tájház","közeli","rövid"],"weather":"30/16 °C, esős időszakok – csak szárazabb időablakban."},{"id":"jul14_hadas_mezokovesd","title":"Mezőkövesd Hadas városrész és Hadas Látogatóközpont","day":"Júl. 14. kedd","date":"2026-07-14","time":"Délelőtt, Zsóryval kombinálható","kind":"Kultúra / matyó világ / idősbarát","place":"Mezőkövesd, Hadas városrész","distance":"kb. 20-25 km","duration":"1-2 óra","summary":"Szép, népi építészetes, matyó hangulatú séta és látogatóközpont. Jó kulturális kiegészítő, ha Mezőkövesd/Zsóry felé mentek.","goodFor":"Szülőknek, nagyszülőknek jó; gyerekeknek akkor, ha rövid és kapnak keresős feladatot: virágmotívum, színek, régi házak.","watchOut":"Vasárnap zárva szokott lenni, de a keddi nap jó eséllyel működik; nyitvatartást indulás előtt nézzétek meg.","kids":3,"seniors":5,"rain":true,"unique":false,"waze":"Hadas Látogatóközpont Mezőkövesd","source":"Hadas Látogatóközpont / Mezőkövesd","url":"https://www.hadaslatogatokozpont.hu/","tags":["Mezőkövesd","idősbarát","kultúra","rövid","esőterv"],"weather":"30/16 °C, esős időszakok – Zsóryval kombinálható B-terv."},{"id":"jul15_delamotte","title":"De la Motte-kastély szerda délelőtti rövid programként","day":"Júl. 15. szerda","date":"2026-07-15","time":"11:00 után, indulás előtt/után","kind":"Kultúra / idősbarát","place":"Noszvaj, Dobó István u. 10.","distance":"Noszvajon belül","duration":"45-75 perc","summary":"Ha vasárnap kimaradt, szerda jó záróprogram. Rövid, helyben van, és nem borítja fel az indulós napot.","goodFor":"Nagymamának és szülőknek jó; gyerekeknek röviden, kastélykerti szünettel.","watchOut":"A pontos nyitvatartást és esetleges rendezvény miatti zárást indulás előtt ellenőrizzétek.","kids":2,"seniors":5,"rain":true,"unique":false,"waze":"De la Motte kastély Noszvaj Dobó István utca 10","source":"Noszvaj turizmus / Tündérkert Hotel","url":"https://turizmus.noszvaj.hu/de-la-motte-kastely/","tags":["idősbarát","helyben","rövid","kultúra"],"weather":"26/15 °C, napos – jó kényelmes zárás."},{"id":"jul15_meseut_rovid","title":"Meseút rövidített verzió vagy kedvenc állomások újrajátszása","day":"Júl. 15. szerda","date":"2026-07-15","time":"Reggel / délelőtt","kind":"Gyerekbarát indulós program","place":"Noszvaj, Meseút állomások","distance":"Noszvajon belül","duration":"45-90 perc","summary":"Indulás előtt kevés logisztikával ad még egy élményt a gyerekeknek. Nem kell teljes útvonalat csinálni, elég 2-3 kedvenc állomás.","goodFor":"Gyerekeknek nagyon jó; időseknek akkor, ha egy közeli, síkabb részt választotok.","watchOut":"Csomagolós napon ne vállaljátok túl. Legyen fix visszaérési idő.","kids":5,"seniors":3,"rain":false,"unique":false,"waze":"Meseút Noszvaj","source":"Meseút / Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/meseut/","tags":["gyerek","helyben","rövid","indulós"],"weather":"26/15 °C, napos – kellemesebb reggel."},{"id":"jul15_kaptarkovek","title":"Szomolyai kaptárkövek – rövid természetes csodák","day":"Júl. 15. szerda","date":"2026-07-15","time":"Délelőtt vagy késő délután","kind":"Természet / rövid túra","place":"Szomolya, kaptárkövek","distance":"kb. 10-15 km","duration":"1-2 óra","summary":"Különleges bükkaljai kőformák rövidebb kirándulással. Jó, ha a csapat szeretne még természetet, de nem akar nagy utat.","goodFor":"Felnőtteknek és nagyobb gyerekeknek jó; nagymamának csak óvatosan, ha a terep és a meleg nem gond.","watchOut":"Egyenetlen talaj, kisgyerekeknél kézfogás. Ne a legmelegebb időben menjetek.","kids":3,"seniors":2,"rain":false,"unique":false,"waze":"Szomolyai kaptárkövek természetvédelmi terület","source":"Bükk-vidék Geopark / BNPI","url":"https://www.bnpi.hu/hu/ertekek/kaptarkovek","tags":["természet","különleges","rövid túra","óvatosan"],"weather":"26/15 °C, napos – jobb idő túrára, de terepes."},{"id":"jul15_bukkicsillagda_evening","title":"Bükki Csillagda esti csillagászati program","day":"Júl. 15. szerda","date":"2026-07-15","time":"Sötétedéshez igazítva, kb. 21:00 körül","kind":"Egyedi helyi esemény / esti csillagles","place":"Répáshuta, Bükki Csillagda","distance":"kb. 35-45 km","duration":"akár 2,5-3 óra + utazás","summary":"Nagyon különleges dátumhoz kötött élmény: nyári szünetben szerda esténként is van esti csillagászati program, időjárástól függő távcsöves/planetáriumi tartalommal.","goodFor":"Felnőtteknek, tesóknak, szülőknek és nagyobb gyerekeknek top. A 3-6 éveseknek késői és hosszú, a hivatalos ajánlás inkább idősebb gyerekeknek kedvez.","watchOut":"Jegyet előre kell venni, helyszíni jegyvásárlás nincs. Legalább 20 fő jelentkezése és időjárás is számít; réteges öltözet kell.","kids":2,"seniors":4,"rain":true,"unique":true,"waze":"Bükki Csillagda Répáshuta","source":"BNPI / Bükki Csillagda","url":"https://www.bnpi.hu/hu/program-reszletek/esti-csillagaszati-program-a-bukki-csillagdaban-hu-646544","tags":["egyedi esemény","esti","felnőtt","csillagles"],"weather":"26/15 °C, napos – este réteges öltözet."},{"id":"jul15_egerszalok_furdo","title":"Egerszalók / Saliris fürdős záróprogram","day":"Júl. 15. szerda","date":"2026-07-15","time":"Délután, ha nem siettek haza","kind":"Fürdő / pihenős zárás","place":"Egerszalók, Saliris környéke","distance":"kb. 20-25 km","duration":"2-4 óra","summary":"Nyugodtabb, pihenős zárás, ha a család inkább fürdőzne, mint még egy sétát vállalna. Sódombbal kombinálható.","goodFor":"Időseknek és felnőtteknek jó; gyerekeknek vízi programként működik.","watchOut":"Belépők és aktuális medencehasználat ellenőrzése. Indulás napján könnyű túlnyújtani az időt.","kids":4,"seniors":5,"rain":true,"unique":false,"waze":"Saliris Resort Egerszalók fürdő","source":"Saliris / Egerszalók","url":"https://www.salirisresort.hu/gyogyfurdo/","tags":["fürdő","idősbarát","pihenős","zárás"],"weather":"26/15 °C, napos – kellemes fürdős idő."},{"id":"jul15_felsotarkany","title":"Felsőtárkányi-tó és könnyű tanösvényes séta","day":"Júl. 15. szerda","date":"2026-07-15","time":"Délelőtt vagy délután","kind":"Könnyű természet / árnyékos séta","place":"Felsőtárkány, tó környéke","distance":"kb. 10-15 km","duration":"1-2 óra","summary":"Közeli, zöld, könnyen rövidíthető kirándulás. Jó kompromisszum, ha a Szalajka túl nagy út, de kell még erdő és vízpart.","goodFor":"Gyerekeknek és időseknek is jó, ha a rövid, kényelmes részeket választjátok.","watchOut":"Eső után saras lehet. Szúnyogriasztó hasznos.","kids":4,"seniors":4,"rain":false,"unique":false,"waze":"Felsőtárkányi-tó","source":"Felsőtárkány / Bükk térség","url":"https://www.felsotarkany.hu/","tags":["természet","közeli","idősbarát","gyerek"],"weather":"26/15 °C, napos – jó könnyű kirándulós idő."},{"id":"jul15_eger_bazilika","title":"Egri Bazilika és rövid belvárosi templomos megálló","day":"Júl. 15. szerda","date":"2026-07-15","time":"Délelőtt vagy hazafelé Eger felé kerülve","kind":"Rövid kultúra / idősbarát","place":"Eger, Pyrker tér 1.","distance":"kb. 12-15 km","duration":"30-75 perc","summary":"Rövid, hűvös, látványos és könnyebben adagolható egri záróprogram. Jól kombinálható a Város a Város Alattal, mert közel vannak egymáshoz.","goodFor":"Nagyszülőknek és felnőtteknek jó; gyerekekkel rövid, csendes megállóként működik.","watchOut":"Miséket és látogatási rendet ellenőrizzétek; a gyerekeknek legyen utána mozgásos levezetés.","kids":2,"seniors":5,"rain":true,"unique":false,"waze":"Egri Bazilika Pyrker tér Eger","source":"Egri Főszékesegyház / látogatási információk","url":"https://bazilikaeger.hu/","tags":["Eger","beltéri","idősbarát","kultúra","rövid"],"weather":"26/15 °C, napos – kellemes záróprogram."},{"id":"jul15_bogacs_pincesor_seta","title":"Bogács Cserépi úti pincesor – hangulatséta felnőtteknek","day":"Júl. 15. szerda","date":"2026-07-15","time":"Késő délután vagy hazafelé rövid kitérő","kind":"Borvidéki hangulat / felnőtt séta","place":"Bogács, Cserépi úti pincesor","distance":"kb. 12-15 km","duration":"45-120 perc","summary":"Nem étteremként, hanem rövid hangulati programként vettem fel: pincesor, fotók, felnőtteknek kis kóstoló, gyerekeknek rövid séta.","goodFor":"Felnőtteknek és időseknek hangulatos; gyerekekkel csak röviden, ha nem túl meleg és nem késő.","watchOut":"Kóstolásnál sofőr kérdés, gyerekeknek legyen külön cél/feladat. Nem elsődleges 3-6 éves program.","kids":2,"seniors":4,"rain":false,"unique":false,"waze":"Cserépi úti pincesor Bogács","source":"Bogács turizmus / pincesorok","url":"https://bogacs.hu/pincesorok","tags":["felnőtt","idősbarát","borvidék","rövid","Bogács"],"weather":"26/15 °C, napos – késő délután kellemes."},{"id":"jul15_eger_torokfurdo","title":"Egri Török Fürdő – felnőtt, nyugis wellness opció","day":"Júl. 15. szerda","date":"2026-07-15","time":"Délelőtt vagy délután, kisebb felnőtt csoportnak","kind":"Fürdő / felnőtt wellness","place":"Eger, Fürdő u. 3.","distance":"kb. 12-15 km","duration":"1,5-3 óra","summary":"Inkáb egy felnőtt/nagyszülő pihenős program, ha valaki kiugrana nyugodtabb wellnessre. A teljes kisgyerekes csapatnak nem első választás.","goodFor":"Felnőtteknek és időseknek jó; 3-6 éveseknek nem ez a legjobb program.","watchOut":"Belépést és korlátozásokat ellenőrizzétek. Nagy családdal inkább Egri Termál vagy Zsóry praktikusabb.","kids":1,"seniors":4,"rain":true,"unique":false,"waze":"Egri Török Fürdő Fürdő utca 3 Eger","source":"Visit Eger / Török fürdő","url":"https://visiteger.com/latnivalok/top-10-latnivalo/torok-furdo","tags":["fürdő","felnőtt","idősbarát","beltéri","Eger"],"weather":"26/15 °C, napos – pihenős záróopció."},{"id":"any_hotel_green_games","title":"Szállás zöldterület: családi miniolimpia és kincskeresés","day":"Bármelyik nap","date":"any","time":"Ebéd utáni pihenő / vacsora előtt","kind":"Szálláson játszható program","place":"Panoráma Hotel nagy zöld területe","distance":"0 km","duration":"30-75 perc","summary":"Nem kirándulás, hanem csapatmentő program: pecsétgyűjtős miniolimpia, buborékfújás, labdás célbadobás, falevél-kincskeresés, nagyszülőkkel zsűrizve.","goodFor":"Gyerekeknek top; időseknek is jó, mert ülve lehet pontozni, mesélni, fotózni.","watchOut":"Legyen árnyék, víz, kullancsellenőrzés. Esőben a feladatok beltéri változatát válasszátok.","kids":5,"seniors":5,"rain":true,"unique":false,"waze":"Panoráma Hotel Noszvaj","source":"Saját játékötlet","url":"","tags":["szálláson","gyerek","idősbarát","tartalék"],"weather":"Bármelyik nap – hőségben árnyékban, esőben beltéri verzió."},{"id":"any_oxygen_adrenalinpark","title":"Oxygen Adrenalin Park, Mátra-Sástó – nagyobb kaland extra opcióként","day":"Bármelyik nap, ha bevállaljátok a hosszabb utat","date":"any","time":"10:00-19:00 nyári főszezonban, időjárásfüggő attrakciókkal","kind":"Kalandpark / távolabbi extra","place":"Gyöngyös-Sástó, Oxygen Adrenalin Park","distance":"50 km-en túl, inkább 1 teljesebb fél nap","duration":"3-5 óra + hosszabb utazás","summary":"A user által említett adrenalinpark típusú program: bob, kalandparkos élmények, nagyobb gyerekeknek és bevállalós felnőtteknek. A 3-6 évesek miatt csak extra opcióként tettem be.","goodFor":"Tesóknak/felnőtteknek és nagyobb gyerekeknek jó. A 3-6 éveseknél attrakciónként nézni kell a magasság/kor szabályokat; nagymamának inkább nézelődős.","watchOut":"Távolabbi, és az attrakciók időjárás miatt korlátozódhatnak. Csak akkor menjetek, ha a csapat tényleg kalandparkot akar.","kids":3,"seniors":2,"rain":false,"unique":false,"waze":"Oxygen Adrenalin Park Sástó","source":"Oxygen Adrenalin Park / nyitvatartás","url":"https://adrenalin-park.hu/a-parkrol/nyitvatartas","tags":["kalandpark","távolabbi","felnőtt","nagyobb gyerek","extra"],"weather":"Bármelyik nap – zivatarveszélynél ne válasszátok."}]</script>
+  <script id="sources-data" type="application/json">[{"name":"Meseút / Noszvaj turizmus","url":"https://www.meseut.hu/sarkanyvadasz-meseut-noszvaj/"},{"name":"Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/aktiv-szabadido/"},{"name":"Noszvaj turizmus / Tündérkert Hotel","url":"https://turizmus.noszvaj.hu/de-la-motte-kastely/"},{"name":"Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/barlanglakasok/"},{"name":"Visit Eger","url":"https://visiteger.com/programok/osszes/hamajdlesz-2026-ludas-matyi-07-12"},{"name":"Visit Eger","url":"https://visiteger.com/programok/osszes/hamajdlesz-2026-pustol-a-ho"},{"name":"Bogács hivatalos eseménynaptár","url":"https://bogacs.hu/kamionos-talalkozo"},{"name":"Bogácsi Gyógy- és Strandfürdő","url":"https://bogacsigyogyfurdo.hu/"},{"name":"Visit Eger","url":"https://visiteger.com/programok/helyi/labdarugo-vilagbajnoksag-2026"},{"name":"kisvasut.hu / Felsőtárkány","url":"https://www.kisvasut.hu/index.php?rfa=169"},{"name":"Egri Vár / Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/egri-var"},{"name":"Visit Eger","url":"https://visiteger.com/programok/helyi/brody-parkkonyvtar-az-ersekkertben-2026"},{"name":"Visit Eger / Egri Termálfürdő","url":"https://visiteger.com/latnivalok/elmenyek/furdozes/termalfurdo"},{"name":"Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/kopcsik-marcipania"},{"name":"Egerszalók / Saliris térség","url":"https://www.egerszalok.hu/hu/turisztika/latnivalok/sodomb"},{"name":"Demjén Cascade","url":"https://demjencascade.hu/"},{"name":"Eger.hu / Város a Város Alatt","url":"https://www.eger.hu/hu/varos/latnivalok-32/varos-a-varos-alatt"},{"name":"Visit Eger / Városnéző kisvonat","url":"https://visiteger.com/hasznos/kozlekedes/varosnezo-kisvonat"},{"name":"Egri Csillagvizsgáló és Tudományos Élményközpont","url":"https://www.egricsillagvizsgalo.hu/"},{"name":"Visit Eger / Minaret","url":"https://visiteger.com/latnivalok/top-10-latnivalo/minaret"},{"name":"Egri Vár / Gárdonyi Emlékház","url":"https://egrivar.hu/c/nyitvatartas"},{"name":"Visit Eger / Bródy ParkKönyvtár és Érsekkert","url":"https://visiteger.com/programok/helyi/brody-parkkonyvtar-az-ersekkertben"},{"name":"Szilvásvárad hivatalos / Egererdő","url":"https://www.szilvasvarad.hu/hu/szilvasvaradi-allami-erdei-vasut"},{"name":"Bükki Csillagda / BNPI","url":"https://www.bukkicsillagda.hu/"},{"name":"Bélapátfalva / Bükk térség","url":"https://www.belapatfalva.hu/"},{"name":"Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/erseki-palota"},{"name":"Egri Road / Visit Eger","url":"https://www.egerbeatlesmuseum.hu/"},{"name":"Zsóry fürdő / Mezőkövesd","url":"https://www.zsory-furdo.hu/"},{"name":"Suba-lyuk Múzeum / Cserépfalu","url":"https://www.museum.hu/muzeum/1463/Suba-lyuk_Muzeum_es_Latogatokozpont"},{"name":"Bükkalja / Oszlai Tájház","url":"https://www.programturizmus.hu/partner-oszlai-tajhaz-cserepfalu.html"},{"name":"Hadas Látogatóközpont / Mezőkövesd","url":"https://www.hadaslatogatokozpont.hu/"},{"name":"Meseút / Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/meseut/"},{"name":"Bükk-vidék Geopark / BNPI","url":"https://www.bnpi.hu/hu/ertekek/kaptarkovek"},{"name":"BNPI / Bükki Csillagda","url":"https://www.bnpi.hu/hu/program-reszletek/esti-csillagaszati-program-a-bukki-csillagdaban-hu-646544"},{"name":"Saliris / Egerszalók","url":"https://www.salirisresort.hu/gyogyfurdo/"},{"name":"Felsőtárkány / Bükk térség","url":"https://www.felsotarkany.hu/"},{"name":"Egri Főszékesegyház / látogatási információk","url":"https://bazilikaeger.hu/"},{"name":"Bogács turizmus / pincesorok","url":"https://bogacs.hu/pincesorok"},{"name":"Visit Eger / Török fürdő","url":"https://visiteger.com/latnivalok/top-10-latnivalo/torok-furdo"},{"name":"Oxygen Adrenalin Park / nyitvatartás","url":"https://adrenalin-park.hu/a-parkrol/nyitvatartas"}]</script>
   <script>
-    const PROGRAMS = [{"id":"jul12_meseut","title":"Sárkányvadász Meseút Noszvajon","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Érkezés után / délután, rugalmas","kind":"Gyerekbarát kaland","place":"Noszvaj, Meseút kezdőpont","distance":"0-3 km Noszvajon belül","duration":"1,5-3 óra, rövidíthető","summary":"Falun belüli mesés, keresgélős, próbatételes útvonal. Jó első napra, mert nem kell autózni, a gyerekek azonnal kapnak célokat és feladatokat.","goodFor":"3-6 éveseknek nagyon jó; felnőtteknek kellemes séta; nagymamának a teljes 7 km sok lehet, ezért rövidített verziót javaslok.","watchOut":"A kulcsok/kezdőcsomag átvételi idejét indulás előtt ellenőrizzétek. Hőségben csak árnyékosabb szakaszokat válasszatok.","kids":5,"seniors":3,"rain":false,"unique":false,"waze":"Meseút Noszvaj","source":"Meseút / Noszvaj turizmus","url":"https://www.meseut.hu/sarkanyvadasz-meseut-noszvaj/","tags":["gyerek","séta","helyben","játékos"],"weather":"32/17 °C, többnyire napos – inkább késő délután."},{"id":"jul12_sikfokut","title":"Síkfőkúti-tó, Tórét és nagyon könnyű tóparti séta","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Érkezés után / naplemente előtt","kind":"Könnyű természet","place":"Noszvaj-Síkfőkút","distance":"kb. 3-5 km","duration":"45-90 perc","summary":"Könnyű, pihenős zöld program tóparttal, nagyobb mozgástérrel és fotópontokkal. A szálláshoz közeli, fáradt érkezős napra ideális.","goodFor":"Kisgyerekeknek szaladgálós, időseknek is kényelmesebb, mint egy hosszabb túra.","watchOut":"Napvédő, sapka, víz. Babakocsival/rollerrel csak a könnyű részeket válasszátok.","kids":4,"seniors":5,"rain":false,"unique":false,"waze":"Síkfőkút tó Noszvaj","source":"Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/aktiv-szabadido/","tags":["idősbarát","gyerek","természet","rövid"],"weather":"32/17 °C, többnyire napos – kora reggel vagy késő délután."},{"id":"jul12_delamotte","title":"De la Motte-kastély és kastélykert","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"11:00-16:00 körül, ellenőrzéssel","kind":"Kultúra / idősbarát","place":"Noszvaj, Dobó István u. 10.","distance":"Noszvajon belül","duration":"45-75 perc","summary":"Rövid, elegáns kastélyprogram, ami a szülőknek és nagymamának kényelmesebb választás. Gyerekekkel is működik, de inkább rövid látogatásként.","goodFor":"Idősebbeknek nagyon jó; gyerekeknek akkor jó, ha nem túl hosszú a vezetés és van utána szaladgálás.","watchOut":"Hétfő-kedd jellemzően zárva, ezért vasárnap vagy szerda jobb. Rendezvény miatt időnként változhat a látogathatóság.","kids":2,"seniors":5,"rain":true,"unique":false,"waze":"De la Motte kastély Noszvaj Dobó István utca 10","source":"Noszvaj turizmus / Tündérkert Hotel","url":"https://turizmus.noszvaj.hu/de-la-motte-kastely/","tags":["idősbarát","beltéri","kultúra","rövid"],"weather":"32/17 °C – hőségben jó rövid beltéri megálló."},{"id":"jul12_barlanglakasok","title":"Noszvaji barlanglakások és Farkaskő Alkotótelep","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Délelőtt vagy késő délután","kind":"Különleges hely / séta","place":"Noszvaj, Pocem környéke","distance":"Noszvajon belül","duration":"45-90 perc","summary":"Rövid, látványos noszvaji különlegesség tufába vájt lakásokkal és művésztelepi hangulattal. Fotós, beszélgetős, nem túl hosszú program.","goodFor":"Felnőtteknek és idősebbeknek érdekes; gyerekeknek barlangszerű terek miatt izgalmas, de nem klasszikus játszós program.","watchOut":"Egyenetlen talaj lehet. Nagymamának csak a könnyen megközelíthető részeket válasszátok.","kids":3,"seniors":3,"rain":false,"unique":false,"waze":"Noszvaji barlanglakások","source":"Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/barlanglakasok/","tags":["különleges","rövid","fotós","helyben"],"weather":"32/17 °C – hőségben ne délben menjetek."},{"id":"jul12_ludas_matyi","title":"Hamajdlesz Feszt: Lúdas Matyi meseelőadás","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"17:00","kind":"Egyedi helyi esemény / családi színház","place":"Civil Közösségek Háza, Eger, Kossuth Lajos u. 12.","distance":"kb. 12-15 km","duration":"kb. 60-90 perc + utazás","summary":"Az egyik legjobb dátumhoz kötött találat: családoknak és gyerekeknek ajánlott Lúdas Matyi-előadás az egri Hamajdlesz Feszt zárónapján.","goodFor":"3-6 éveseknél a mese és a rövid színházi forma miatt jó esélyes. Felnőtteknek is vállalható, ha Eger felé mennétek.","watchOut":"Jegyet/ülőhelyet előre nézzetek. A 17:00 időpont belecsúszhat a vacsorába a szálláson.","kids":5,"seniors":4,"rain":true,"unique":true,"waze":"Civil Közösségek Háza Eger Kossuth Lajos utca 12","source":"Visit Eger","url":"https://visiteger.com/programok/osszes/hamajdlesz-2026-ludas-matyi-07-12","tags":["egyedi esemény","gyerek","színház","Eger"],"weather":"32/17 °C – beltéri/udvari program, melegben is jobb, mint túrázni."},{"id":"jul12_pustol","title":"Hamajdlesz Feszt: Pustol a hó – Szarvas Józsi önálló est","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"19:00","kind":"Egyedi helyi esemény / felnőtt színház","place":"Civil Közösségek Háza, Eger, Kossuth Lajos u. 12.","distance":"kb. 12-15 km","duration":"kb. 90 perc + utazás","summary":"Dátumhoz kötött esti színházi program, inkább felnőtteknek, szülőknek és nagyszülőknek. A kisgyerekes teljes csapatnak valószínűleg kevésbé praktikus.","goodFor":"Idősebbeknek és felnőtteknek jó; a 3-6 éveseknek nem ideális.","watchOut":"A vacsora és altatás miatt csak akkor jó, ha kisebb felnőtt csapat menne át Egerbe.","kids":1,"seniors":4,"rain":true,"unique":true,"waze":"Civil Közösségek Háza Eger Kossuth Lajos utca 12","source":"Visit Eger","url":"https://visiteger.com/programok/osszes/hamajdlesz-2026-pustol-a-ho","tags":["egyedi esemény","felnőtt","színház","Eger"],"weather":"32/17 °C – esti, hűvösebb idősáv."},{"id":"jul12_bogacs_kamion","title":"Bogácsi Kamionos Találkozó – utolsó nap","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Napközben, részletes program ellenőrzéssel","kind":"Egyedi helyi esemény / járműves családi program","place":"Bogács Rendezvénypark","distance":"kb. 12-15 km","duration":"1,5-3 óra","summary":"A környék egyik konkrét, utazási időszakra eső eseménye. A kamionok és járművek miatt a gyerekeknek látványos lehet, és Bogácson fürdőzéssel is kombinálható.","goodFor":"Járműrajongó gyerekeknek nagyon jó; idősebbeknek akkor, ha nem túl hangos/napos.","watchOut":"Utolsó nap, ezért a pontos napi programot külön ellenőrizzétek. Hőségben legyen sapka, víz, árnyék.","kids":5,"seniors":2,"rain":false,"unique":true,"waze":"Bogács Rendezvénypark","source":"Bogács hivatalos eseménynaptár","url":"https://bogacs.hu/kamionos-talalkozo","tags":["egyedi esemény","gyerek","jármű","Bogács"],"weather":"32/17 °C – meleg, déli hőséget kerüljétek."},{"id":"jul12_bogacs_furdo","title":"Bogácsi Gyógy- és Strandfürdő","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Délelőtt vagy délután","kind":"Fürdő / családi pihenő","place":"Bogács, Fürdő u. 2.","distance":"kb. 12-15 km","duration":"2-4 óra","summary":"Biztonsági családi program meleg napra: pancsolás a gyerekeknek, gyógyvizesebb pihenés a felnőtteknek és idősebbeknek.","goodFor":"Gyerekeknek és időseknek is jó, ha mindenki bírja a meleget és van árnyékos pihenés.","watchOut":"Vasárnap zsúfoltabb lehet. Úszógumi/karúszó, papucs, UV-védelem.","kids":5,"seniors":4,"rain":true,"unique":false,"waze":"Bogácsi Gyógy- és Strandfürdő","source":"Bogácsi Gyógy- és Strandfürdő","url":"https://bogacsigyogyfurdo.hu/","tags":["fürdő","gyerek","idősbarát","melegben jó"],"weather":"32/17 °C – klasszikus meleg napi B-terv."},{"id":"jul12_eger_szurkolozona","title":"Egri vb-szurkolói zóna a Végvári vitézek terén","day":"Júl. 12. vasárnap","date":"2026-07-12","time":"Esti meccsek: jellemzően 18:00 és 21:00","kind":"Nyári esti helyi hangulat","place":"Eger, Végvári vitézek tere","distance":"kb. 12-15 km","duration":"1-2 óra, bármikor otthagyható","summary":"Nyári városi hangulat óriáskivetítővel. Inkább spontán felnőtt/fiatalos esti program, nem a teljes kisgyerekes csapatnak.","goodFor":"Felnőtteknek és nagyobb gyerekeknek; 3-6 éveseknek zajos és késői lehet.","watchOut":"A késői kezdés miatt altatással ütközhet. Tömeg, zaj, esti parkolás.","kids":2,"seniors":3,"rain":false,"unique":true,"waze":"Végvári vitézek tere Eger","source":"Visit Eger","url":"https://visiteger.com/programok/helyi/labdarugo-vilagbajnoksag-2026","tags":["egyedi szezonális","Eger","esti","felnőtt"],"weather":"32/17 °C – estére kellemesebb."},{"id":"jul13_eger_var","title":"Egri vár + Dobó tér rövid belvárosi kör","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Délelőtt, 9:30-12:30 körül","kind":"Kultúra / városi séta","place":"Eger, Vár köz 1.","distance":"kb. 12-15 km","duration":"2-3 óra, rövidíthető","summary":"Eger klasszikus családi főprogramja: várfalak, ágyúk, kilátás, majd rövid belvárosi séta. A gyerekeknek a vár kalandos, a nagyszülőknek történelmi.","goodFor":"Minden korosztálynak ad valamit, de lépcsők és kövek miatt nagymamának rövidített útvonal ajánlott.","watchOut":"Hétfőn is indulás előtt ellenőrizzétek az aktuális belépést/kiállításokat. A várban kevés árnyék lehet.","kids":4,"seniors":3,"rain":false,"unique":false,"waze":"Egri vár Eger Vár köz 1","source":"Egri Vár / Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/egri-var","tags":["Eger","kultúra","klasszikus","kilátás"],"weather":"31/17 °C, kevés eső – délelőtt, esőkabáttal."},{"id":"jul13_parkkonyvtar","title":"Bródy ParkKönyvtár az Érsekkertben","day":"Júl. 13. hétfő","date":"2026-07-13","time":"9:00-11:00, jó idő esetén","kind":"Szezonális családi program / park","place":"Eger, Érsekkert, szökőkút környéke","distance":"kb. 12-15 km","duration":"45-90 perc","summary":"Nyári kültéri olvasó- és társasjátékozó pont a parkban. Jól párosítható az egri várral, fürdővel vagy belvárosi sétával.","goodFor":"Gyerekeknek nyugodt, árnyékosabb, leülős program; nagyszülőknek is kényelmes.","watchOut":"Csak jó időben és hétköznap 9-11 között működik. Eső esetén ne erre építsetek.","kids":4,"seniors":5,"rain":false,"unique":true,"waze":"Érsekkert Eger","source":"Visit Eger","url":"https://visiteger.com/programok/helyi/brody-parkkonyvtar-az-ersekkertben-2026","tags":["egyedi szezonális","gyerek","idősbarát","Eger"],"weather":"31/17 °C, kevés eső – csak jó időben."},{"id":"jul13_egri_termal","title":"Egri Termál- és Strandfürdő","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Ebéd után / délután","kind":"Fürdő / pihenős családi program","place":"Eger, Petőfi tér 2.","distance":"kb. 12-15 km","duration":"2-4 óra","summary":"Klasszikus meleg napi program Egerben. Jó, ha a városnézés után mindenki pihenne, és kell gyerekbarátabb, vízi program.","goodFor":"Gyerekeknek és idősebbeknek is jó, ha nem túl zsúfolt. Nagymamának árnyékos pihenőhely legyen.","watchOut":"A csapat nagy, ezért legyen találkozópont és karkötős/telefonszámos megoldás a gyerekeknél.","kids":5,"seniors":4,"rain":true,"unique":false,"waze":"Egri Termálfürdő Eger Petőfi tér 2","source":"Visit Eger / Egri Termálfürdő","url":"https://visiteger.com/latnivalok/elmenyek/furdozes/termalfurdo","tags":["fürdő","gyerek","idősbarát","Eger"],"weather":"31/17 °C, kevés eső – melegben jó, zápor esetén is vállalható."},{"id":"jul13_kopcsik","title":"Kopcsik Marcipánia és Harangöntő-ház","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Dél körül / eső esetén","kind":"Beltéri apró csoda / rövid múzeum","place":"Eger, Harangöntő u. 4.","distance":"kb. 12-15 km","duration":"30-60 perc","summary":"Rövid beltéri látványprogram marcipánból készült alkotásokkal. Jó eső- vagy hőségszünet a belvárosban.","goodFor":"Gyerekeknek látványos, időseknek kényelmes, de nem egész napos program.","watchOut":"Nyitvatartást ellenőrizzétek, mert rövid látogatásként érdemes beilleszteni.","kids":4,"seniors":4,"rain":true,"unique":false,"waze":"Kopcsik Marcipánia Eger Harangöntő utca 4","source":"Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/kopcsik-marcipania","tags":["beltéri","gyerek","idősbarát","rövid"],"weather":"31/17 °C, kevés eső – jó esőszünet."},{"id":"jul13_sodomb","title":"Egerszalóki Sódomb naplementés sétával","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Késő délután / naplemente","kind":"Könnyű látványosság","place":"Egerszalók, Sódomb","distance":"kb. 20-25 km","duration":"45-90 perc","summary":"Rövid, látványos, sok utazás nélküli kiruccanás. Naplemente felé szebb és hűvösebb, nagyszülőknek is könnyebben vállalható.","goodFor":"Időseknek jó, gyerekeknek rövid ideig érdekes, fotózós megállóként működik.","watchOut":"A sétányon tartsátok be a kijelölt útvonalat. Esőben csúszós lehet.","kids":3,"seniors":5,"rain":false,"unique":false,"waze":"Egerszalók Sódomb","source":"Egerszalók / Saliris térség","url":"https://www.egerszalok.hu/hu/turisztika/latnivalok/sodomb","tags":["idősbarát","rövid","fotós","naplemente"],"weather":"31/17 °C, kevés eső – naplementénél jobb."},{"id":"jul13_demjen","title":"Demjéni Cascade Barlang- és Élményfürdő","day":"Júl. 13. hétfő","date":"2026-07-13","time":"Délután / eső esetén","kind":"Fürdő / beltéri élmény","place":"Demjén, Cascade Barlangfürdő","distance":"kb. 25-30 km","duration":"2-4 óra","summary":"Erős esőterv: barlangfürdős, látványos vízi program, ami kevésbé időjárásfüggő. A gyerekeknek nagy élmény lehet, felnőtteknek pihentető.","goodFor":"Gyerekeknek nagyon jó, idősebbeknek akkor, ha szeretik a fürdőt és a párás-barlangos hangulatot.","watchOut":"Csúszásveszély, tömeg, meleg-párás levegő. A nagymama komfortját külön nézzétek.","kids":5,"seniors":3,"rain":true,"unique":false,"waze":"Cascade Barlangfürdő Demjén","source":"Demjén Cascade","url":"https://demjencascade.hu/","tags":["esőterv","fürdő","gyerek","beltéri"],"weather":"31/17 °C, kevés eső – esős délutánra jó."},{"id":"jul14_szalajka","title":"Szalajka-völgy és Szilvásváradi Erdei Kisvasút","day":"Júl. 14. kedd","date":"2026-07-14","time":"Délelőtt, ha nem esik tartósan","kind":"Nagy családi kirándulás / kisvasút","place":"Szilvásvárad, Szalajka út 6.","distance":"kb. 35-40 km","duration":"3-5 óra","summary":"A legerősebb klasszikus gyerekes kirándulás a környéken: kisvasút, Fátyol-vízesés, könnyű völgyi séta. Nagy csapatnál is jól működik, mert részekre bontható.","goodFor":"Gyerekeknek top program; nagyszülőknek a kisvasút miatt kényelmesebb, de a séta hosszát okosan kell választani.","watchOut":"Keddre esős időszakok látszanak, ezért csak rugalmasan. Menetrendet az adott napra válasszátok ki indulás előtt.","kids":5,"seniors":4,"rain":false,"unique":false,"waze":"Szilvásváradi Állami Erdei Vasút Szalajka út 6","source":"Szilvásvárad hivatalos / Egererdő","url":"https://www.szilvasvarad.hu/hu/szilvasvaradi-allami-erdei-vasut","tags":["top gyerek","kisvasút","természet","nagy program"],"weather":"30/16 °C, esős időszakok – csak esőablakban."},{"id":"jul14_bukkicsillagda_day","title":"Bükki Csillagda nappali látogatás","day":"Júl. 14. kedd","date":"2026-07-14","time":"Délelőtt vagy kora délután","kind":"Beltéri tudomány / esőterv","place":"Répáshuta, Bükki Csillagda","distance":"kb. 35-45 km","duration":"2-3 óra + utazás","summary":"Esősebb napra jó alternatíva: csillagászati, planetáriumos, tudományos élmény. A 3 éveseknek lehet hosszú, a 6 éveseknek már sokkal jobb.","goodFor":"Felnőtteknek, nagyszülőknek és nagyobb gyerekeknek jó; 3-4 éveseknek csak akkor, ha bírják a nyugodtabb programot.","watchOut":"Jegy/turnus ellenőrzés szükséges. Hegyvidéki út, indulásnál számoljatok tartalék idővel.","kids":3,"seniors":4,"rain":true,"unique":false,"waze":"Bükki Csillagda Répáshuta","source":"Bükki Csillagda / BNPI","url":"https://www.bukkicsillagda.hu/","tags":["esőterv","beltéri","tudomány","nagyobb gyerek"],"weather":"30/16 °C, esős időszakok – jó beltéri B-terv."},{"id":"jul14_bogacs_fedett","title":"Bogács fürdő – fedettebb, rövidebb esőterv","day":"Júl. 14. kedd","date":"2026-07-14","time":"Esősebb délután","kind":"Fürdő / esőterv","place":"Bogács, Gyógy- és Strandfürdő","distance":"kb. 12-15 km","duration":"2-3 óra","summary":"Ha a Szalajka-völgyet elmossa az eső, Bogács a közeli, egyszerűbb B-terv. Nem kell messzire menni, a gyerekek lemozogják magukat.","goodFor":"Gyerekeknek jó, időseknek is pihentető lehet, ha nem túl zsúfolt.","watchOut":"Esőben is lehet tömeg. Papucs, törölköző, meleg váltóruha a gyerekeknek.","kids":5,"seniors":4,"rain":true,"unique":false,"waze":"Bogácsi Gyógy- és Strandfürdő","source":"Bogácsi Gyógy- és Strandfürdő","url":"https://bogacsigyogyfurdo.hu/","tags":["esőterv","fürdő","közeli","gyerek"],"weather":"30/16 °C, esős időszakok – erős B-terv."},{"id":"jul14_belapatfalva","title":"Bélapátfalva: ciszterci apátság + tóparti rövid séta","day":"Júl. 14. kedd","date":"2026-07-14","time":"Délelőtt vagy délután, esőablakban","kind":"Kultúra + könnyű természet","place":"Bélapátfalva, apátság és tó","distance":"kb. 35-40 km","duration":"2-3 óra + utazás","summary":"Csendesebb, nagyszülőbarátabb alternatíva Szilvásvárad környékén: apátság, tó, rövid séta, kevesebb inger.","goodFor":"Időseknek és felnőtteknek nagyon jó; gyerekeknek rövidebb, szabad mozgással kombinálva működik.","watchOut":"Esőben a tópart kevésbé jó. Nagy csapatnál parkolást és mosdót előre gondoljatok át.","kids":3,"seniors":5,"rain":false,"unique":false,"waze":"Bélapátfalvai Ciszterci Apátság","source":"Bélapátfalva / Bükk térség","url":"https://www.belapatfalva.hu/","tags":["idősbarát","kultúra","tó","csendes"],"weather":"30/16 °C, esős időszakok – rövid esőablakban."},{"id":"jul14_erseki_palota","title":"Érseki Palota Turisztikai Látogatóközpont, Eger","day":"Júl. 14. kedd","date":"2026-07-14","time":"Esős időben / délelőtt","kind":"Beltéri kultúra / idősbarát","place":"Eger, Széchenyi u. 1.","distance":"kb. 12-15 km","duration":"1-2 óra","summary":"Kényelmesebb egri beltéri program felnőtteknek és nagyszülőknek. Jó, ha az eső miatt nem akartok hegyi vagy völgyi programot.","goodFor":"Időseknek jó; a kisebb gyerekeknek csak rövidebb beiktatásként.","watchOut":"A gyerekek figyelmi idejéhez igazítsátok, és legyen utána mozgásos program.","kids":2,"seniors":5,"rain":true,"unique":false,"waze":"Érseki Palota Turisztikai Látogatóközpont Eger","source":"Visit Eger","url":"https://visiteger.com/latnivalok/top-10-latnivalo/erseki-palota","tags":["beltéri","idősbarát","kultúra","Eger"],"weather":"30/16 °C, esős időszakok – jó esőprogram."},{"id":"jul14_beatles","title":"Egri Road Beatles Múzeum","day":"Júl. 14. kedd","date":"2026-07-14","time":"Esős délután / felnőtt mini-program","kind":"Beltéri nosztalgia / felnőtt program","place":"Eger, Csiky Sándor u. 30.","distance":"kb. 12-15 km","duration":"60-90 perc","summary":"Jó kis felnőtt/nagyszülő nosztalgia, ha a gyerekek egyik része pihen vagy alszik. Nem elsődleges 3-6 éves program, de esőben mentőötlet.","goodFor":"Felnőtteknek és időseknek érdekes; kisgyerekeknek inkább csak röviden.","watchOut":"Nyitvatartást ellenőrizzétek. Nagy családi csapatnak csak akkor jó, ha mindenki szereti a témát.","kids":2,"seniors":4,"rain":true,"unique":false,"waze":"Egri Road Beatles Múzeum Eger Csiky Sándor utca 30","source":"Egri Road / Visit Eger","url":"https://www.egerbeatlesmuseum.hu/","tags":["beltéri","felnőtt","nosztalgia","Eger"],"weather":"30/16 °C, esős időszakok – jó felnőtt esőprogram."},{"id":"jul15_delamotte","title":"De la Motte-kastély szerda délelőtti rövid programként","day":"Júl. 15. szerda","date":"2026-07-15","time":"11:00 után, indulás előtt/után","kind":"Kultúra / idősbarát","place":"Noszvaj, Dobó István u. 10.","distance":"Noszvajon belül","duration":"45-75 perc","summary":"Ha vasárnap kimaradt, szerda jó záróprogram. Rövid, helyben van, és nem borítja fel az indulós napot.","goodFor":"Nagymamának és szülőknek jó; gyerekeknek röviden, kastélykerti szünettel.","watchOut":"A pontos nyitvatartást és esetleges rendezvény miatti zárást indulás előtt ellenőrizzétek.","kids":2,"seniors":5,"rain":true,"unique":false,"waze":"De la Motte kastély Noszvaj Dobó István utca 10","source":"Noszvaj turizmus / Tündérkert Hotel","url":"https://turizmus.noszvaj.hu/de-la-motte-kastely/","tags":["idősbarát","helyben","rövid","kultúra"],"weather":"26/15 °C, napos – jó kényelmes zárás."},{"id":"jul15_meseut_rovid","title":"Meseút rövidített verzió vagy kedvenc állomások újrajátszása","day":"Júl. 15. szerda","date":"2026-07-15","time":"Reggel / délelőtt","kind":"Gyerekbarát indulós program","place":"Noszvaj, Meseút állomások","distance":"Noszvajon belül","duration":"45-90 perc","summary":"Indulás előtt kevés logisztikával ad még egy élményt a gyerekeknek. Nem kell teljes útvonalat csinálni, elég 2-3 kedvenc állomás.","goodFor":"Gyerekeknek nagyon jó; időseknek akkor, ha egy közeli, síkabb részt választotok.","watchOut":"Csomagolós napon ne vállaljátok túl. Legyen fix visszaérési idő.","kids":5,"seniors":3,"rain":false,"unique":false,"waze":"Meseút Noszvaj","source":"Meseút / Noszvaj turizmus","url":"https://turizmus.noszvaj.hu/meseut/","tags":["gyerek","helyben","rövid","indulós"],"weather":"26/15 °C, napos – kellemesebb reggel."},{"id":"jul15_kaptarkovek","title":"Szomolyai kaptárkövek – rövid természetes csodák","day":"Júl. 15. szerda","date":"2026-07-15","time":"Délelőtt vagy késő délután","kind":"Természet / rövid túra","place":"Szomolya, kaptárkövek","distance":"kb. 10-15 km","duration":"1-2 óra","summary":"Különleges bükkaljai kőformák rövidebb kirándulással. Jó, ha a csapat szeretne még természetet, de nem akar nagy utat.","goodFor":"Felnőtteknek és nagyobb gyerekeknek jó; nagymamának csak óvatosan, ha a terep és a meleg nem gond.","watchOut":"Egyenetlen talaj, kisgyerekeknél kézfogás. Ne a legmelegebb időben menjetek.","kids":3,"seniors":2,"rain":false,"unique":false,"waze":"Szomolyai kaptárkövek természetvédelmi terület","source":"Bükk-vidék Geopark / BNPI","url":"https://www.bnpi.hu/hu/ertekek/kaptarkovek","tags":["természet","különleges","rövid túra","óvatosan"],"weather":"26/15 °C, napos – jobb idő túrára, de terepes."},{"id":"jul15_bukkicsillagda_evening","title":"Bükki Csillagda esti csillagászati program","day":"Júl. 15. szerda","date":"2026-07-15","time":"Sötétedéshez igazítva, kb. 21:00 körül","kind":"Egyedi helyi esemény / esti csillagles","place":"Répáshuta, Bükki Csillagda","distance":"kb. 35-45 km","duration":"akár 2,5-3 óra + utazás","summary":"Nagyon különleges dátumhoz kötött élmény: nyári szünetben szerda esténként is van esti csillagászati program, időjárástól függő távcsöves/planetáriumi tartalommal.","goodFor":"Felnőtteknek, tesóknak, szülőknek és nagyobb gyerekeknek top. A 3-6 éveseknek késői és hosszú, a hivatalos ajánlás inkább idősebb gyerekeknek kedvez.","watchOut":"Jegyet előre kell venni, helyszíni jegyvásárlás nincs. Legalább 20 fő jelentkezése és időjárás is számít; réteges öltözet kell.","kids":2,"seniors":4,"rain":true,"unique":true,"waze":"Bükki Csillagda Répáshuta","source":"BNPI / Bükki Csillagda","url":"https://www.bnpi.hu/hu/program-reszletek/esti-csillagaszati-program-a-bukki-csillagdaban-hu-646544","tags":["egyedi esemény","esti","felnőtt","csillagles"],"weather":"26/15 °C, napos – este réteges öltözet."},{"id":"jul15_egerszalok_furdo","title":"Egerszalók / Saliris fürdős záróprogram","day":"Júl. 15. szerda","date":"2026-07-15","time":"Délután, ha nem siettek haza","kind":"Fürdő / pihenős zárás","place":"Egerszalók, Saliris környéke","distance":"kb. 20-25 km","duration":"2-4 óra","summary":"Nyugodtabb, pihenős zárás, ha a család inkább fürdőzne, mint még egy sétát vállalna. Sódombbal kombinálható.","goodFor":"Időseknek és felnőtteknek jó; gyerekeknek vízi programként működik.","watchOut":"Belépők és aktuális medencehasználat ellenőrzése. Indulás napján könnyű túlnyújtani az időt.","kids":4,"seniors":5,"rain":true,"unique":false,"waze":"Saliris Resort Egerszalók fürdő","source":"Saliris / Egerszalók","url":"https://www.salirisresort.hu/gyogyfurdo/","tags":["fürdő","idősbarát","pihenős","zárás"],"weather":"26/15 °C, napos – kellemes fürdős idő."},{"id":"jul15_felsotarkany","title":"Felsőtárkányi-tó és könnyű tanösvényes séta","day":"Júl. 15. szerda","date":"2026-07-15","time":"Délelőtt vagy délután","kind":"Könnyű természet / árnyékos séta","place":"Felsőtárkány, tó környéke","distance":"kb. 10-15 km","duration":"1-2 óra","summary":"Közeli, zöld, könnyen rövidíthető kirándulás. Jó kompromisszum, ha a Szalajka túl nagy út, de kell még erdő és vízpart.","goodFor":"Gyerekeknek és időseknek is jó, ha a rövid, kényelmes részeket választjátok.","watchOut":"Eső után saras lehet. Szúnyogriasztó hasznos.","kids":4,"seniors":4,"rain":false,"unique":false,"waze":"Felsőtárkányi-tó","source":"Felsőtárkány / Bükk térség","url":"https://www.felsotarkany.hu/","tags":["természet","közeli","idősbarát","gyerek"],"weather":"26/15 °C, napos – jó könnyű kirándulós idő."},{"id":"any_hotel_green_games","title":"Szállás zöldterület: családi miniolimpia és kincskeresés","day":"Bármelyik nap","date":"any","time":"Ebéd utáni pihenő / vacsora előtt","kind":"Szálláson játszható program","place":"Panoráma Hotel nagy zöld területe","distance":"0 km","duration":"30-75 perc","summary":"Nem kirándulás, hanem csapatmentő program: pecsétgyűjtős miniolimpia, buborékfújás, labdás célbadobás, falevél-kincskeresés, nagyszülőkkel zsűrizve.","goodFor":"Gyerekeknek top; időseknek is jó, mert ülve lehet pontozni, mesélni, fotózni.","watchOut":"Legyen árnyék, víz, kullancsellenőrzés. Esőben a feladatok beltéri változatát válasszátok.","kids":5,"seniors":5,"rain":true,"unique":false,"waze":"Panoráma Hotel Noszvaj","source":"Saját játékötlet","url":"","tags":["szálláson","gyerek","idősbarát","tartalék"],"weather":"Bármelyik nap – hőségben árnyékban, esőben beltéri verzió."}];
-    const STORAGE_KEY = "noszvaj_program_valaszto_2026_v2";
-    const state = loadState();
-    let filters = {day:"all", kind:"all", q:"", kids:false, senior:false, unique:false, rain:false, showDecided:false};
-    let drag = null;
+    const PROGRAMS = JSON.parse(document.getElementById('program-data').textContent);
+    const SOURCES = JSON.parse(document.getElementById('sources-data').textContent);
+    const STORAGE_KEY = 'noszvaj_family_program_selector_2026_v3';
+    const OLD_KEY = 'noszvaj_program_valaszto_2026_v2';
+    const DEFAULT_VOTERS = ['Én','Feleségem','Tesó 1','Tesó 2','Szülők','Nagymama','Gyerekek'];
+    const LABELS = {top:'TOP', yes:'Érdekel', maybe:'Talán', no:'Nem'};
+    const EMOJI = {top:'★', yes:'✓', maybe:'?', no:'✕'};
+    const WEIGHT = {top:3, yes:2, maybe:1, no:-2};
+    let filters = {day:'all', audience:'all', rain:'all', decided:'open', q:''};
+    let toastTimer = null;
 
-    const $ = (id)=>document.getElementById(id);
-    const deckShell = $("deckShell");
-
-    function loadState(){
+    function initState(){
       try{
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-        const ids = PROGRAMS.map(p=>p.id);
-        return {
-          decisions: saved.decisions || {},
-          history: saved.history || [],
-          order: Array.isArray(saved.order) && saved.order.length ? saved.order.filter(id=>ids.includes(id)) : ids
-        };
-      }catch(e){ return {decisions:{}, history:[], order:PROGRAMS.map(p=>p.id)}; }
-    }
-    function saveState(){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      renderAll();
-    }
-    function toast(msg="Mentve"){
-      const t = $("toast"); t.textContent = msg; t.classList.add("show");
-      clearTimeout(window.__toast); window.__toast=setTimeout(()=>t.classList.remove("show"), 1300);
-    }
-    function wazeUrl(p){ return "https://waze.com/ul?q=" + encodeURIComponent(p.waze || p.place || p.title) + "&navigate=yes"; }
-    function rating(n){ return "●".repeat(n) + "○".repeat(5-n); }
-    function escapeHtml(s){ return String(s||"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m])); }
-
-    function init(){
-      const kinds = [...new Set(PROGRAMS.map(p=>p.kind))].sort((a,b)=>a.localeCompare(b,"hu"));
-      const kindSelect = $("kindFilter");
-      kinds.forEach(k=>{ const opt=document.createElement("option"); opt.value=k; opt.textContent=k; kindSelect.appendChild(opt); });
-      $("dayFilter").addEventListener("change", e=>{filters.day=e.target.value; renderAll();});
-      $("kindFilter").addEventListener("change", e=>{filters.kind=e.target.value; renderAll();});
-      $("searchBox").addEventListener("input", e=>{filters.q=e.target.value.trim().toLowerCase(); renderAll();});
-      [["kidsOnly","kids"],["seniorOnly","senior"],["uniqueOnly","unique"],["rainOnly","rain"],["showDecided","showDecided"]].forEach(([id,key])=>{
-        $(id).addEventListener("change", e=>{filters[key]=e.target.checked; renderAll();});
-      });
-      $("resetBtn").addEventListener("click", ()=>{
-        if(confirm("Töröljem az összes eddigi döntést?")){
-          state.decisions={}; state.history=[]; state.order=PROGRAMS.map(p=>p.id); saveState(); toast("Újrakezdve");
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if(saved && saved.votes && saved.voters){
+          return normalizeState(saved);
         }
-      });
-      $("shuffleBtn").addEventListener("click", ()=>{ shuffle(state.order); saveState(); toast("Megkeverve"); });
-      $("undoBtn").addEventListener("click", undo);
-      $("exportCsvBtn").addEventListener("click", exportCsv);
-      $("copyBtn").addEventListener("click", copyList);
-      document.addEventListener("keydown", handleKey);
-      renderSources();
-      renderAll();
+      }catch(e){}
+      // Importálja a régi, egyszemélyes döntéseket az "Én" profil alá, ha vannak.
+      let oldVotes = {};
+      try{
+        const old = JSON.parse(localStorage.getItem(OLD_KEY) || 'null');
+        if(old && old.decisions) oldVotes = old.decisions;
+      }catch(e){}
+      return normalizeState({voters:DEFAULT_VOTERS, activeVoter:'Én', votes:{'Én':oldVotes}, history:[], order:PROGRAMS.map(p=>p.id)});
     }
-    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } }
+    let state = initState();
 
+    function normalizeState(s){
+      const ids = new Set(PROGRAMS.map(p=>p.id));
+      const voters = Array.from(new Set([...(s.voters||DEFAULT_VOTERS), ...DEFAULT_VOTERS])).filter(Boolean);
+      const votes = {};
+      voters.forEach(v=>{ votes[v] = {}; });
+      Object.entries(s.votes || {}).forEach(([v, obj])=>{
+        if(!votes[v]){voters.push(v); votes[v]={};}
+        Object.entries(obj || {}).forEach(([id, dec])=>{ if(ids.has(id) && LABELS[dec]) votes[v][id] = dec; });
+      });
+      const order = (s.order || []).filter(id=>ids.has(id));
+      PROGRAMS.forEach(p=>{ if(!order.includes(p.id)) order.push(p.id); });
+      const activeVoter = voters.includes(s.activeVoter) ? s.activeVoter : voters[0];
+      return {voters, activeVoter, votes, history:Array.isArray(s.history)?s.history:[], order};
+    }
+    function saveState(render=true){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if(render) renderAll();
+    }
+    function byId(id){ return PROGRAMS.find(p=>p.id===id); }
+    function escapeHtml(str){ return String(str ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch])); }
+    function wazeLink(q){ return 'https://waze.com/ul?q=' + encodeURIComponent(q || '') + '&navigate=yes'; }
+    function decisionOf(id, voter=state.activeVoter){ return state.votes[voter]?.[id]; }
+    function familyVotes(id){ return state.voters.map(v=>({v, d:decisionOf(id,v)})).filter(x=>x.d); }
+    function familyScore(id){ return familyVotes(id).reduce((sum,x)=>sum+(WEIGHT[x.d]||0),0); }
+    function counts(id){ const c={top:0,yes:0,maybe:0,no:0,total:0}; familyVotes(id).forEach(x=>{c[x.d]++; c.total++;}); return c; }
+    function sortDate(a,b){ const da=a.date==='any'?'9999-12-31':a.date; const db=b.date==='any'?'9999-12-31':b.date; return da.localeCompare(db,'hu') || a.title.localeCompare(b.title,'hu'); }
+    function orderedPrograms(){ const map = Object.fromEntries(PROGRAMS.map(p=>[p.id,p])); return state.order.map(id=>map[id]).filter(Boolean); }
     function matches(p){
-      if(filters.day !== "all" && p.date !== filters.day) return false;
-      if(filters.kind !== "all" && p.kind !== filters.kind) return false;
-      if(filters.kids && p.kids < 4) return false;
-      if(filters.senior && p.seniors < 4) return false;
-      if(filters.unique && !p.unique) return false;
-      if(filters.rain && !p.rain) return false;
+      if(filters.day !== 'all' && p.date !== filters.day) return false;
+      if(filters.rain === 'rain' && !p.rain) return false;
+      if(filters.rain === 'outdoor' && p.rain) return false;
+      if(filters.audience === 'kids' && p.kids < 4) return false;
+      if(filters.audience === 'seniors' && p.seniors < 4) return false;
+      if(filters.audience === 'both' && !(p.kids >= 4 && p.seniors >= 4)) return false;
+      if(filters.audience === 'unique' && !p.unique) return false;
+      const d = decisionOf(p.id);
+      if(filters.decided === 'open' && d) return false;
+      if(['top','yes','maybe','no'].includes(filters.decided) && d !== filters.decided) return false;
       if(filters.q){
-        const hay = [p.title,p.day,p.kind,p.place,p.summary,p.goodFor,p.watchOut,p.tags.join(" ")].join(" ").toLowerCase();
-        if(!hay.includes(filters.q)) return false;
+        const hay = [p.title,p.kind,p.place,p.summary,p.goodFor,p.watchOut,p.tags?.join(' ')].join(' ').toLowerCase();
+        if(!hay.includes(filters.q.toLowerCase())) return false;
       }
-      if(!filters.showDecided && state.decisions[p.id]) return false;
       return true;
     }
-    function orderedPrograms(){
-      const byId = Object.fromEntries(PROGRAMS.map(p=>[p.id,p]));
-      return state.order.map(id=>byId[id]).filter(Boolean);
-    }
     function currentDeck(){ return orderedPrograms().filter(matches); }
+    function labelDecision(d){ return LABELS[d] || '—'; }
+    function badgeVotesHtml(p){
+      const votes = familyVotes(p.id);
+      if(!votes.length) return '<span class="pill">Még nincs családi szavazat</span>';
+      return votes.map(x=>`<span class="vote-chip ${x.d}">${escapeHtml(x.v)}: ${EMOJI[x.d]} ${LABELS[x.d]}</span>`).join('');
+    }
 
-    function renderAll(){ renderDeck(); renderStats(); renderLists(); }
-
+    function cardHtml(p, idx){
+      const activeDecision = decisionOf(p.id);
+      const starsKids = '★'.repeat(p.kids) + '☆'.repeat(5-p.kids);
+      const starsSeniors = '★'.repeat(p.seniors) + '☆'.repeat(5-p.seniors);
+      return `<article class="program-card ${idx===0?'top':'stack'+idx}" data-id="${escapeHtml(p.id)}" style="z-index:${10-idx}" aria-label="${escapeHtml(p.title)}">
+        <div class="swipe-badge yes">Érdekel</div><div class="swipe-badge no">Nem</div><div class="swipe-badge maybe">Talán</div><div class="swipe-badge top">TOP</div>
+        <div class="card-inner">
+          <div class="card-face card-front tap-zone">
+            <div class="front-main">
+              <div class="card-top"><span class="pill day">${escapeHtml(p.day)}</span><div class="kind">${escapeHtml(p.kind)}</div></div>
+              <h2>${escapeHtml(p.title)}</h2>
+              <div class="meta">
+                <div>📍 <span>${escapeHtml(p.place)} · ${escapeHtml(p.distance)}</span></div>
+                <div>🕒 <span>${escapeHtml(p.time)} · ${escapeHtml(p.duration)}</span></div>
+                <div>🌤️ <span>${escapeHtml(p.weather || '')}</span></div>
+              </div>
+              <p class="summary">${escapeHtml(p.summary)}</p>
+              <div class="scores">
+                <span class="score">Gyerek: <strong>${starsKids}</strong></span>
+                <span class="score">Idős: <strong>${starsSeniors}</strong></span>
+                <span class="score">${p.rain?'☔ Esőterv':'🌲 Kültéri'}</span>
+                ${p.unique?'<span class="score">✨ Egyedi/időpontos</span>':''}
+                ${activeDecision?`<span class="score">${escapeHtml(state.activeVoter)}: <strong>${LABELS[activeDecision]}</strong></span>`:''}
+              </div>
+              <div class="front-actions">
+                <button type="button" class="button info-toggle" data-flip>ℹ️ Több infó</button>
+                <a class="button" href="${wazeLink(p.waze || p.place)}" target="_blank" rel="noopener">📍 Waze</a>
+              </div>
+              <p class="card-compact-hint">Koppints középre a részletekhez. Döntéshez használd az alsó gombokat, vagy húzz határozottan.</p>
+            </div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-top"><span class="pill day">${escapeHtml(p.day)}</span><div class="kind">${escapeHtml(p.kind)}</div></div>
+            <h3>${escapeHtml(p.title)}</h3>
+            <div class="detail-grid">
+              <div class="detail-block"><b>Röviden</b>${escapeHtml(p.summary)}</div>
+              <div class="detail-block"><b>Kinek jó?</b>${escapeHtml(p.goodFor)}</div>
+              <div class="detail-block"><b>Figyelj erre</b>${escapeHtml(p.watchOut)}</div>
+              <div class="detail-block"><b>Hely és idő</b>📍 ${escapeHtml(p.place)} · ${escapeHtml(p.distance)}<br>🕒 ${escapeHtml(p.time)} · ${escapeHtml(p.duration)}<br>🌤️ ${escapeHtml(p.weather || '')}</div>
+              <div class="detail-block"><b>Családi döntések</b><div class="family-votes">${badgeVotesHtml(p)}</div></div>
+            </div>
+            <div class="tags">${(p.tags||[]).slice(0,8).map(t=>`<span class="tag">#${escapeHtml(t)}</span>`).join('')}</div>
+            <div class="back-actions">
+              <button type="button" class="button info-toggle" data-flip>↩ Vissza</button>
+              <a class="button" href="${wazeLink(p.waze || p.place)}" target="_blank" rel="noopener">📍 Waze</a>
+              ${p.url?`<a class="button" href="${escapeHtml(p.url)}" target="_blank" rel="noopener">Forrás</a>`:''}
+            </div>
+          </div>
+        </div>
+      </article>`;
+    }
     function renderDeck(){
       const deck = currentDeck();
+      const area = document.getElementById('deckArea');
       if(!deck.length){
-        deckShell.innerHTML = `<div class="empty"><div><h2>Nincs több kártya ebben a szűrésben.</h2><p>Kapcsold be a „döntötteket is mutassa” opciót, lazíts a szűrőkön, vagy exportáld a listát.</p><div class="side-actions" style="justify-content:center"><button class="ghost" onclick="clearFilters()">Szűrők törlése</button><button class="primary" onclick="exportCsv()">CSV export</button></div></div></div>`;
+        area.innerHTML = `<div class="empty"><h2>Nincs több kártya ebben a szűrésben</h2><p>Válts szűrőt, vagy állítsd az “Összes kártya” módot. Az aktív szavazó: <b>${escapeHtml(state.activeVoter)}</b>.</p><button id="emptyShowAll" class="primary">Összes kártya mutatása</button></div>`;
+        document.getElementById('emptyShowAll')?.addEventListener('click',()=>{filters.decided='all'; document.getElementById('decidedFilter').value='all'; renderAll();});
         return;
       }
-      const p = deck[0];
-      const decided = state.decisions[p.id];
-      deckShell.innerHTML = cardHtml(p, decided);
-      const card = deckShell.querySelector(".card");
-      attachDrag(card);
-      card.querySelector("[data-decision='no']").addEventListener("click", ()=>decide(p.id,"no"));
-      card.querySelector("[data-decision='maybe']").addEventListener("click", ()=>decide(p.id,"maybe"));
-      card.querySelector("[data-decision='yes']").addEventListener("click", ()=>decide(p.id,"yes"));
-      card.querySelector("[data-decision='top']").addEventListener("click", ()=>decide(p.id,"top"));
+      area.innerHTML = deck.slice(0,3).map((p,i)=>cardHtml(p,i)).join('');
+      attachDrag();
     }
-    function cardHtml(p, decided){
-      const tags = [
-        p.unique ? `<span class="chip unique">✨ egyedi esemény</span>` : "",
-        p.rain ? `<span class="chip rain">☔ esőterv is</span>` : "",
-        p.kids>=4 ? `<span class="chip kid">🧒 gyerekbarát</span>` : "",
-        p.seniors>=4 ? `<span class="chip senior">👵 időseknek is jó</span>` : "",
-        `<span class="chip rating">Gyerek: ${rating(p.kids)}</span>`,
-        `<span class="chip rating">Idős: ${rating(p.seniors)}</span>`,
-        ...(p.tags||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`)
-      ].join("");
-      const src = p.url ? `<a class="btn" href="${escapeHtml(p.url)}" target="_blank" rel="noopener">Forrás</a>` : "";
-      const status = decided ? `<span class="pill note">Korábbi döntés: ${labelDecision(decided)}</span>` : "";
-      return `<article class="card" data-id="${escapeHtml(p.id)}">
-          <div class="swipe-stamp yes">JÖHET</div><div class="swipe-stamp no">NEM</div><div class="swipe-stamp maybe">TALÁN</div><div class="swipe-stamp top">TOP</div>
-          <div class="ribbon"><div class="day-badge">${escapeHtml(p.day)}</div><div class="kind-badge">${escapeHtml(p.kind)}</div></div>
-          <h2>${escapeHtml(p.title)}</h2>
-          <div class="chips">${status}${tags}</div>
-          <div class="meta">
-            <div><b>Időpont</b>${escapeHtml(p.time)}</div>
-            <div><b>Helyszín</b>${escapeHtml(p.place)}</div>
-            <div><b>Távolság</b>${escapeHtml(p.distance)}</div>
-            <div><b>Időtartam</b>${escapeHtml(p.duration)}</div>
-          </div>
-          <p class="summary">${escapeHtml(p.summary)}</p>
-          <div class="info-box"><b>Kinek jó?</b><br>${escapeHtml(p.goodFor)}</div>
-          <div class="info-box"><b>Figyelj rá:</b><br>${escapeHtml(p.watchOut)}<br><br><b>Időjárás:</b> ${escapeHtml(p.weather)}</div>
-          <div class="linkrow"><a class="btn" href="${wazeUrl(p)}" target="_blank" rel="noopener">📍 Waze</a>${src}</div>
-          <div class="card-actions"><button class="no" data-decision="no">✕ Nem</button><button class="maybe" data-decision="maybe">? Talán</button><button class="yes" data-decision="yes">✓ Érdekel</button><button class="top" data-decision="top">★ Top</button></div>
-        </article>`;
+    function attachDrag(){
+      const card = document.querySelector('.program-card.top');
+      if(!card) return;
+      let dragging=false, startX=0, startY=0, dx=0, dy=0;
+      const isMobile = window.matchMedia('(max-width: 680px)').matches;
+      const badgeStart = isMobile ? 52 : 38;
+      const decisionThreshold = isMobile ? 150 : 115;
+      const dominance = isMobile ? 1.25 : 1.12;
+      function setBadge(kind, opacity){
+        card.querySelectorAll('.swipe-badge').forEach(b=>b.style.opacity=0);
+        if(kind) card.querySelector('.swipe-badge.'+kind).style.opacity=opacity;
+      }
+      function dominantKind(){
+        const ax=Math.abs(dx), ay=Math.abs(dy);
+        if(ay > ax * dominance) return dy < 0 ? 'top' : 'maybe';
+        if(ax > ay * dominance) return dx > 0 ? 'yes' : 'no';
+        return null;
+      }
+      function toggleFlip(){
+        card.classList.toggle('flipped');
+        setBadge(null,0);
+      }
+      card.querySelectorAll('[data-flip]').forEach(btn=>btn.addEventListener('click', e=>{e.preventDefault(); e.stopPropagation(); toggleFlip();}));
+      card.addEventListener('click', e=>{
+        if(e.target.closest('a,button,input,select,label')) return;
+        if(Math.max(Math.abs(dx), Math.abs(dy)) > 10) return;
+        toggleFlip();
+      });
+      card.addEventListener('pointerdown', e=>{
+        if(card.classList.contains('flipped')) return;
+        if(e.target.closest('a,button,input,select,label')) return;
+        dragging=true; startX=e.clientX; startY=e.clientY; dx=dy=0;
+        card.setPointerCapture(e.pointerId); card.style.transition='none';
+      });
+      card.addEventListener('pointermove', e=>{
+        if(!dragging) return;
+        dx=e.clientX-startX; dy=e.clientY-startY;
+        const travel=Math.max(Math.abs(dx), Math.abs(dy));
+        if(travel < 8) return;
+        const rot = dx/18; card.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg)`;
+        const kind = travel > badgeStart ? dominantKind() : null;
+        setBadge(kind, kind ? Math.min(1, travel/170) : 0);
+      });
+      function end(){
+        if(!dragging) return;
+        dragging=false;
+        const travel=Math.max(Math.abs(dx), Math.abs(dy));
+        const d = dominantKind();
+        if(travel > decisionThreshold && d){
+          card.style.transition='.22s ease';
+          card.style.transform=`translate(${dx*3}px,${dy*3}px) rotate(${dx/10}deg)`;
+          setTimeout(()=>decideCurrent(d),120);
+        }else{
+          card.style.transition='.18s ease'; card.style.transform=''; setBadge(null,0);
+        }
+      }
+      card.addEventListener('pointerup', end); card.addEventListener('pointercancel', end);
     }
-    function labelDecision(d){ return {yes:"Érdekel", no:"Nem", maybe:"Talán", top:"Top"}[d] || d; }
-
-    function attachDrag(card){
-      const start = (x,y)=>{ drag={x,y,dx:0,dy:0,id:card.dataset.id}; card.style.transition="none"; };
-      const move = (x,y,ev)=>{
-        if(!drag) return;
-        drag.dx=x-drag.x; drag.dy=y-drag.y;
-        const rot = drag.dx/18;
-        card.style.transform=`translate(${drag.dx}px, ${drag.dy}px) rotate(${rot}deg)`;
-        card.style.opacity=String(Math.max(.55,1-Math.abs(drag.dx)/650-Math.abs(drag.dy)/850));
-        updateStamp(card, drag.dx, drag.dy);
-        if(ev && Math.abs(drag.dx)+Math.abs(drag.dy)>8) ev.preventDefault();
-      };
-      const end = ()=>{
-        if(!drag) return;
-        const {dx,dy,id}=drag; drag=null;
-        if(dx>115) return animateOut(card,"yes",()=>decide(id,"yes",false));
-        if(dx<-115) return animateOut(card,"no",()=>decide(id,"no",false));
-        if(dy>125) return animateOut(card,"maybe",()=>decide(id,"maybe",false));
-        if(dy<-125) return animateOut(card,"top",()=>decide(id,"top",false));
-        card.style.transition="transform .22s ease, opacity .22s ease";
-        card.style.transform=""; card.style.opacity=""; updateStamp(card,0,0);
-      };
-      card.addEventListener("mousedown", e=>start(e.clientX,e.clientY));
-      window.addEventListener("mousemove", e=>move(e.clientX,e.clientY,e));
-      window.addEventListener("mouseup", end);
-      card.addEventListener("touchstart", e=>{const t=e.touches[0]; start(t.clientX,t.clientY);},{passive:true});
-      card.addEventListener("touchmove", e=>{const t=e.touches[0]; move(t.clientX,t.clientY,e);},{passive:false});
-      card.addEventListener("touchend", end);
+    function decideCurrent(d){ const p=currentDeck()[0]; if(p) decide(p.id,d); }
+    function decide(id,d){
+      const v = state.activeVoter; if(!state.votes[v]) state.votes[v]={};
+      const prev = state.votes[v][id]; state.votes[v][id]=d; state.history.push({v,id,prev,next:d,at:new Date().toISOString()});
+      saveState(); toast(`${v}: ${LABELS[d]}`);
     }
-    function updateStamp(card,dx,dy){
-      const yes=card.querySelector(".swipe-stamp.yes"), no=card.querySelector(".swipe-stamp.no"), maybe=card.querySelector(".swipe-stamp.maybe"), top=card.querySelector(".swipe-stamp.top");
-      yes.style.opacity = dx>20 ? Math.min(1,dx/120) : 0;
-      no.style.opacity = dx<-20 ? Math.min(1,Math.abs(dx)/120) : 0;
-      maybe.style.opacity = dy>35 ? Math.min(1,dy/140) : 0;
-      top.style.opacity = dy<-35 ? Math.min(1,Math.abs(dy)/140) : 0;
+    function undo(){ const last=state.history.pop(); if(!last){toast('Nincs mit visszavonni'); return;} if(!state.votes[last.v]) state.votes[last.v]={}; if(last.prev) state.votes[last.v][last.id]=last.prev; else delete state.votes[last.v][last.id]; saveState(); toast('Visszavonva'); }
+    function renderFilters(){
+      const daySelect=document.getElementById('dayFilter');
+      const existing = daySelect.dataset.ready;
+      if(!existing){
+        const days = [];
+        PROGRAMS.forEach(p=>{ if(p.date!=='any' && !days.some(d=>d.date===p.date)) days.push({date:p.date,label:p.day}); });
+        days.sort((a,b)=>a.date.localeCompare(b.date));
+        days.forEach(d=> daySelect.insertAdjacentHTML('beforeend', `<option value="${d.date}">${escapeHtml(d.label)}</option>`));
+        daySelect.insertAdjacentHTML('beforeend', `<option value="any">Bármelyik nap / tartalék</option>`);
+        daySelect.dataset.ready='1';
+      }
+      daySelect.value=filters.day; document.getElementById('audienceFilter').value=filters.audience; document.getElementById('rainFilter').value=filters.rain; document.getElementById('decidedFilter').value=filters.decided; document.getElementById('searchInput').value=filters.q;
     }
-    function animateOut(card,decision,cb){
-      const transforms={yes:"translate(820px, -40px) rotate(20deg)",no:"translate(-820px, -40px) rotate(-20deg)",maybe:"translate(0, 760px) rotate(4deg)",top:"translate(0, -760px) rotate(-4deg)"};
-      card.style.transition="transform .28s ease, opacity .28s ease";
-      card.style.transform=transforms[decision]; card.style.opacity="0";
-      setTimeout(cb,260);
+    function renderVoters(){
+      const sel=document.getElementById('voterSelect'); sel.innerHTML=state.voters.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join(''); sel.value=state.activeVoter;
+      document.getElementById('voterCount').textContent=state.voters.length; document.getElementById('programCount').textContent=PROGRAMS.length;
     }
-    function decide(id,decision,animate=true){
-      if(state.decisions[id]) state.history.push({id, prev:state.decisions[id]});
-      else state.history.push({id, prev:null});
-      state.decisions[id]=decision;
-      saveState();
-      toast(labelDecision(decision));
-    }
-    function undo(){
-      const last=state.history.pop();
-      if(!last){ toast("Nincs mit visszavonni"); return; }
-      if(last.prev) state.decisions[last.id]=last.prev; else delete state.decisions[last.id];
-      saveState(); toast("Visszavonva");
-    }
-    function handleKey(e){
-      if(["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName)) return;
-      const deck=currentDeck(); if(!deck.length) return;
-      const id=deck[0].id;
-      if(e.key==="ArrowRight") decide(id,"yes");
-      if(e.key==="ArrowLeft") decide(id,"no");
-      if(e.key==="ArrowDown") decide(id,"maybe");
-      if(e.key==="ArrowUp") decide(id,"top");
-    }
-    function clearFilters(){
-      filters={day:"all", kind:"all", q:"", kids:false, senior:false, unique:false, rain:false, showDecided:false};
-      $("dayFilter").value="all"; $("kindFilter").value="all"; $("searchBox").value="";
-      ["kidsOnly","seniorOnly","uniqueOnly","rainOnly","showDecided"].forEach(id=>$(id).checked=false);
-      renderAll();
-    }
-    window.clearFilters=clearFilters;
-
     function renderStats(){
-      const vals={top:0,yes:0,maybe:0,no:0};
-      Object.values(state.decisions).forEach(d=>{ if(vals[d]!==undefined) vals[d]++; });
-      const remaining = orderedPrograms().filter(p=>matches({...p}) && !state.decisions[p.id]).length;
-      $("stats").innerHTML = `<div class="stat"><b>${remaining}</b><span>hátra</span></div><div class="stat"><b>${vals.top}</b><span>top</span></div><div class="stat"><b>${vals.yes}</b><span>jőhet</span></div><div class="stat"><b>${vals.maybe}</b><span>talán</span></div><div class="stat"><b>${vals.no}</b><span>nem</span></div>`;
+      const v=state.activeVoter; const decs=state.votes[v]||{}; const vals=Object.values(decs);
+      const open=PROGRAMS.length-vals.length;
+      const statData=[['Még nincs döntés',open],['TOP',vals.filter(x=>x==='top').length],['Érdekel',vals.filter(x=>x==='yes').length],['Talán',vals.filter(x=>x==='maybe').length],['Nem',vals.filter(x=>x==='no').length],['Családi szavazat',PROGRAMS.filter(p=>familyVotes(p.id).length).length]];
+      document.getElementById('stats').innerHTML=statData.map(s=>`<div class="stat"><b>${s[1]}</b><span>${escapeHtml(s[0])}</span></div>`).join('');
     }
-    function renderLists(){
-      const selected = PROGRAMS.filter(p=>["yes","top"].includes(state.decisions[p.id])).sort(sortByDate);
-      const maybe = PROGRAMS.filter(p=>state.decisions[p.id]==="maybe").sort(sortByDate);
-      $("yesList").innerHTML = selected.length ? selected.map(p=>itemHtml(p,state.decisions[p.id])).join("") : `<div class="item"><small>Még nincs kiválasztott program.</small></div>`;
-      $("maybeList").innerHTML = maybe.length ? maybe.map(p=>itemHtml(p,"maybe")).join("") : `<div class="item"><small>A „talán” lista üres.</small></div>`;
+    function renderFamilyList(){
+      const rows=PROGRAMS.map(p=>({p,score:familyScore(p.id),c:counts(p.id),votes:familyVotes(p.id)})).filter(x=>x.votes.length).sort((a,b)=>b.score-a.score || b.c.top-a.c.top || b.c.yes-a.c.yes || sortDate(a.p,b.p));
+      const el=document.getElementById('familyList');
+      if(!rows.length){ el.innerHTML='<p class="hint">Még nincs közös lista. Kezdjetek el szavazni családtagonként.</p>'; return; }
+      el.innerHTML=rows.map(({p,score,c,votes})=>{
+        const total=Math.max(1,c.top+c.yes+c.maybe+c.no); const pct=k=>Math.round((c[k]/total)*100);
+        return `<div class="mini">
+          <div class="mini-title">${escapeHtml(p.title)}</div>
+          <div class="mini-meta"><span>${escapeHtml(p.day)}</span><span>${escapeHtml(p.kind)}</span><span>Pont: ${score}</span></div>
+          <div class="bar"><i class="btop" style="width:${pct('top')}%"></i><i class="byes" style="width:${pct('yes')}%"></i><i class="bmaybe" style="width:${pct('maybe')}%"></i><i class="bno" style="width:${pct('no')}%"></i></div>
+          <div class="family-votes">${votes.map(x=>`<span class="vote-chip ${x.d}">${escapeHtml(x.v)}: ${LABELS[x.d]}</span>`).join('')}</div>
+          <div class="mini-actions"><button class="small" data-open-card="${escapeHtml(p.id)}">Kártyára ugrás</button><a class="button" href="${wazeLink(p.waze||p.place)}" target="_blank" rel="noopener">Waze</a></div>
+        </div>`;
+      }).join('');
+      el.querySelectorAll('[data-open-card]').forEach(btn=>btn.addEventListener('click',()=>jumpToCard(btn.dataset.openCard)));
     }
-    function sortByDate(a,b){
-      const da=a.date==="any"?"9999":a.date, db=b.date==="any"?"9999":b.date;
-      return da.localeCompare(db) || a.day.localeCompare(b.day,"hu") || a.title.localeCompare(b.title,"hu");
+    function renderActiveList(){
+      const v=state.activeVoter; const rows=PROGRAMS.filter(p=>decisionOf(p.id,v)).sort((a,b)=>{
+        const da=decisionOf(a.id,v), db=decisionOf(b.id,v); return (WEIGHT[db]-WEIGHT[da]) || sortDate(a,b);
+      });
+      const el=document.getElementById('activeList');
+      if(!rows.length){ el.innerHTML=`<p class="hint">${escapeHtml(v)} még nem választott programot.</p>`; return; }
+      el.innerHTML=rows.map(p=>`<div class="mini">
+        <div class="mini-title">${EMOJI[decisionOf(p.id,v)]} ${escapeHtml(p.title)}</div>
+        <div class="mini-meta"><span>${escapeHtml(labelDecision(decisionOf(p.id,v)))}</span><span>${escapeHtml(p.day)}</span><span>${escapeHtml(p.kind)}</span></div>
+        <div class="mini-actions"><button class="small" data-open-card="${escapeHtml(p.id)}">Kártyára ugrás</button><button class="small" data-clear-vote="${escapeHtml(p.id)}">Döntés törlése</button></div>
+      </div>`).join('');
+      el.querySelectorAll('[data-open-card]').forEach(btn=>btn.addEventListener('click',()=>jumpToCard(btn.dataset.openCard)));
+      el.querySelectorAll('[data-clear-vote]').forEach(btn=>btn.addEventListener('click',()=>{delete state.votes[state.activeVoter][btn.dataset.clearVote]; saveState();}));
     }
-    function itemHtml(p,d){
-      return `<div class="item"><b>${d==="top"?"★ ":""}${escapeHtml(p.title)}</b><small>${escapeHtml(p.day)} · ${escapeHtml(p.kind)} · ${escapeHtml(p.time)}</small><br><a href="${wazeUrl(p)}" target="_blank" rel="noopener">Waze</a></div>`;
-    }
-    function selectedRows(){
-      return PROGRAMS.filter(p=>state.decisions[p.id]).map(p=>({decision:labelDecision(state.decisions[p.id]), ...p})).sort((a,b)=>a.decision.localeCompare(b.decision,"hu") || sortByDate(a,b));
-    }
-    function csvEscape(v){ return '"'+String(v??"").replace(/"/g,'""')+'"'; }
-    function exportCsv(){
-      const rows=selectedRows();
-      const headers=["Döntés","Nap","Időpont","Program","Jelleg","Helyszín","Távolság","Időtartam","Gyerek pont","Idős pont","Esőterv","Egyedi","Waze","Forrás"];
-      const lines=[headers.map(csvEscape).join(";")].concat(rows.map(p=>[
-        p.decision,p.day,p.time,p.title,p.kind,p.place,p.distance,p.duration,p.kids,p.seniors,p.rain?"igen":"nem",p.unique?"igen":"nem",wazeUrl(p),p.url||p.source
-      ].map(csvEscape).join(";")));
-      const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"});
-      const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="noszvaj_programvalaszto_dontesek.csv"; a.click(); URL.revokeObjectURL(a.href);
-      toast("CSV letöltve");
-    }
-    window.exportCsv=exportCsv;
-    function copyList(){
-      const rows=PROGRAMS.filter(p=>["top","yes","maybe"].includes(state.decisions[p.id])).sort(sortByDate);
-      const text=rows.map(p=>`${labelDecision(state.decisions[p.id])}: ${p.day} – ${p.title} (${p.kind})\n${p.time}; ${p.place}\nWaze: ${wazeUrl(p)}`).join("\n\n");
-      navigator.clipboard?.writeText(text || "Nincs még kiválasztott program.").then(()=>toast("Lista másolva"),()=>toast("Nem sikerült másolni"));
+    function jumpToCard(id){
+      // Mutassa az összeset, tegye az adott kártyát a pakli elejére.
+      filters.decided='all'; filters.day='all'; filters.audience='all'; filters.rain='all'; filters.q='';
+      state.order = [id, ...state.order.filter(x=>x!==id)]; saveState(); toast('Kártya előre hozva');
     }
     function renderSources(){
-      const seen=new Set();
-      const items=[];
-      PROGRAMS.forEach(p=>{
-        const key=(p.url||p.source||"").trim();
-        if(!key || seen.has(key)) return;
-        seen.add(key);
-        items.push(`<li>${p.url?`<a href="${escapeHtml(p.url)}" target="_blank" rel="noopener">${escapeHtml(p.source)}</a>`:escapeHtml(p.source)}</li>`);
-      });
-      $("sourceList").innerHTML=items.join("");
+      document.getElementById('sourceList').innerHTML = '<ul>' + SOURCES.map(s=>`<li><a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.name)}</a></li>`).join('') + '</ul>';
     }
-    init();
+    function renderAll(){ renderFilters(); renderVoters(); renderStats(); renderDeck(); renderFamilyList(); renderActiveList(); renderSources(); }
+    function toast(msg){ clearTimeout(toastTimer); const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); toastTimer=setTimeout(()=>el.classList.remove('show'),1800); }
+
+    function download(filename, text, type='text/plain;charset=utf-8'){
+      const blob = new Blob([text], {type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+    }
+    function exportJson(){
+      download('noszvaj-csaladi-szavazatok.json', JSON.stringify({version:3, exportedAt:new Date().toISOString(), voters:state.voters, votes:state.votes}, null, 2), 'application/json;charset=utf-8');
+    }
+    function importJson(file){
+      if(!file) return; const reader=new FileReader(); reader.onload=()=>{
+        try{ const data=JSON.parse(reader.result); if(!data.votes) throw new Error('Nincs votes mező');
+          Object.entries(data.votes).forEach(([v,obj])=>{ if(!state.voters.includes(v)) state.voters.push(v); if(!state.votes[v]) state.votes[v]={}; Object.entries(obj||{}).forEach(([id,d])=>{ if(byId(id) && LABELS[d]) state.votes[v][id]=d; }); });
+          saveState(); toast('Szavazatok importálva');
+        }catch(e){ alert('Nem sikerült importálni: '+e.message); }
+      }; reader.readAsText(file);
+    }
+    function exportCsv(){
+      const headers=['Családi pont','TOP db','Érdekel db','Talán db','Nem db','Nap','Program','Jelleg','Helyszín','Waze','Forrás',...state.voters];
+      const rows=PROGRAMS.map(p=>{ const c=counts(p.id); return [familyScore(p.id),c.top,c.yes,c.maybe,c.no,p.day,p.title,p.kind,p.place,wazeLink(p.waze||p.place),p.url||'',...state.voters.map(v=>labelDecision(decisionOf(p.id,v)||''))]; }).filter(r=>r[0]!==0 || r.slice(11).some(Boolean)).sort((a,b)=>Number(b[0])-Number(a[0]));
+      const csv=[headers,...rows].map(row=>row.map(cell=>'"'+String(cell??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+      download('noszvaj-csaladi-programszavazas.csv', '\ufeff'+csv, 'text/csv;charset=utf-8');
+    }
+    async function copyShortlist(){
+      const rows=PROGRAMS.map(p=>({p,score:familyScore(p.id),c:counts(p.id)})).filter(x=>x.score>0 || x.c.top || x.c.yes).sort((a,b)=>b.score-a.score || b.c.top-a.c.top || b.c.yes-a.c.yes || sortDate(a.p,b.p)).slice(0,20);
+      const txt = rows.length ? rows.map((x,i)=>`${i+1}. ${x.p.day} – ${x.p.title} [pont: ${x.score}; TOP ${x.c.top}, igen ${x.c.yes}, talán ${x.c.maybe}, nem ${x.c.no}]`).join('\n') : 'Még nincs pozitív közös választás.';
+      try{ await navigator.clipboard.writeText(txt); toast('Toplista vágólapra másolva'); }catch(e){ prompt('Másold ki:', txt); }
+    }
+
+    document.getElementById('dayFilter').addEventListener('change', e=>{filters.day=e.target.value; renderAll();});
+    document.getElementById('audienceFilter').addEventListener('change', e=>{filters.audience=e.target.value; renderAll();});
+    document.getElementById('rainFilter').addEventListener('change', e=>{filters.rain=e.target.value; renderAll();});
+    document.getElementById('decidedFilter').addEventListener('change', e=>{filters.decided=e.target.value; renderAll();});
+    document.getElementById('searchInput').addEventListener('input', e=>{filters.q=e.target.value.trim(); renderAll();});
+    document.getElementById('voterSelect').addEventListener('change', e=>{state.activeVoter=e.target.value; saveState(); toast('Aktív szavazó: '+state.activeVoter);});
+    document.getElementById('addVoterBtn').addEventListener('click',()=>{ const input=document.getElementById('newVoterInput'); const name=input.value.trim(); if(!name) return; if(!state.voters.includes(name)) state.voters.push(name); if(!state.votes[name]) state.votes[name]={}; state.activeVoter=name; input.value=''; saveState(); toast('Szavazó hozzáadva'); });
+    document.getElementById('newVoterInput').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('addVoterBtn').click(); });
+    document.querySelectorAll('[data-decision]').forEach(btn=>btn.addEventListener('click',()=>decideCurrent(btn.dataset.decision)));
+    document.getElementById('undoBtn').addEventListener('click', undo);
+    document.getElementById('resetActiveBtn').addEventListener('click',()=>{ if(confirm('Törlöd az aktív szavazó döntéseit?')){state.votes[state.activeVoter]={}; saveState();} });
+    document.getElementById('resetAllBtn').addEventListener('click',()=>{ if(confirm('Biztosan törlöd az összes családi szavazatot ezen az eszközön?')){state.votes={}; state.voters.forEach(v=>state.votes[v]={}); state.history=[]; saveState();} });
+    document.getElementById('shuffleBtn').addEventListener('click',()=>{ for(let i=state.order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [state.order[i],state.order[j]]=[state.order[j],state.order[i]];} saveState(); toast('Kártyák megkeverve'); });
+    document.getElementById('showAllBtn').addEventListener('click',()=>{filters.decided='all'; filters.day='all'; filters.audience='all'; filters.rain='all'; filters.q=''; renderAll();});
+    document.getElementById('exportJsonBtn').addEventListener('click', exportJson);
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+    document.getElementById('importJsonInput').addEventListener('change', e=>importJson(e.target.files[0]));
+    document.getElementById('copyShortlistBtn').addEventListener('click', copyShortlist);
+    document.addEventListener('keydown', e=>{
+      if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+      if(e.key==='ArrowRight') decideCurrent('yes');
+      if(e.key==='ArrowLeft') decideCurrent('no');
+      if(e.key==='ArrowDown') decideCurrent('maybe');
+      if(e.key==='ArrowUp') decideCurrent('top');
+      if(e.key.toLowerCase()==='u') undo();
+    });
+    renderAll();
   </script>
 </body>
 </html>
