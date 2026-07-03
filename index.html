@@ -155,6 +155,48 @@
       .card-face{padding:14px;}
     }
 
+
+
+    /* Olvashatósági javítás: a kártyák elő- és hátoldala mostantól teljesen tömör hátteret kap.
+       Így a mögötte lévő pakli szövege nem látszik át mobilon sem. */
+    .program-card{
+      background:#0f1729 !important;
+      isolation:isolate;
+    }
+    .program-card:before{
+      z-index:0;
+      opacity:.75;
+    }
+    .card-inner{
+      z-index:2;
+    }
+    .card-face{
+      background:
+        radial-gradient(circle at 16% 0, rgba(125,211,252,.20), transparent 42%),
+        radial-gradient(circle at 90% 18%, rgba(167,139,250,.18), transparent 38%),
+        linear-gradient(160deg,#1b2945 0%,#151f36 44%,#0d1527 100%) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+      opacity:1 !important;
+    }
+    .card-front,
+    .card-back{
+      background-color:#10192d !important;
+    }
+    .program-card.stack1 .card-inner,
+    .program-card.stack2 .card-inner{
+      visibility:hidden;
+    }
+    .program-card.stack1,
+    .program-card.stack2{
+      background:
+        radial-gradient(circle at 16% 0, rgba(125,211,252,.12), transparent 42%),
+        linear-gradient(160deg,#15223b 0%,#10182c 100%) !important;
+    }
+    @media(max-width:680px){
+      .program-card.stack1{opacity:.52;}
+      .program-card.stack2{opacity:.22;}
+    }
+
   </style>
 </head>
 <body>
